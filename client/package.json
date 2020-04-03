@@ -1,0 +1,18 @@
+{
+  "name": "coligo-object-detection",
+  "version": "1.0.0",
+  "description": "Object Detection with Coligo and Watson Visual Recognition",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vidyasagar Machupalli",
+  "license": "ISC",
+  "dependencies": {
+    "bulma": "^0.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "request": "^2.88.2"
+  }
+}
