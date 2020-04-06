@@ -44,7 +44,7 @@ app.get('/', function(req, res) {
 /*
  * Upload an image for object detection
  */
-app.post('/api/upload', upload.array('files', 10), function(req, res, next) {
+app.post('/images', upload.array('files', 10), function(req, res, next) {
   if(req.files.length > 1){
    res.send('Successfully uploaded ' + req.files.length + ' files to Object Storage')
   }
