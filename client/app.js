@@ -46,16 +46,22 @@ app.post("/uploadimage", function(req, res) {
             rejectUnauthorized: false
           }
         },
-        function(err, resp, body) {
-          if (err) {
-            console.log(err);
+        function(error, resp, body) {
+          if (error) {
+            res.status(400).send(error.message);
           }
-          console.log(body);
+          else{
+          //console.log(body);
           res.send({ data: body });
+          }
         }
       )
     );
   
+});
+
+app.use(function(error, req, res, next) {
+  res.status(500).send(error.message);
 });
 
 app.listen(port, () => console.log(`App listening on port ${port}!`));

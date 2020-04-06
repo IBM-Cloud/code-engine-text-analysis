@@ -110,12 +110,21 @@
               <div class="field">
                 <button
                   class="button is-medium is-info is-outlined"
-                  id="classifybtn"
+                  id="uploadbtn"
                   disabled
                   type="submit"
                   form="imageForm"
                 >
                   Upload Files
+                </button>
+                <button
+                  class="button is-medium is-info is-outlined"
+                  id="detectbtn"
+                  disabled
+                  type="submit"
+                  form="imageForm"
+                >
+                  Detect Objects
                 </button>
                 <div class="error">
                   <p class="error has-text-danger is-medium"></p>
@@ -128,13 +137,6 @@
             <div class="column is-5">
               <div id ="column-multiline" class="columns is-multiline">
               </div>
-              <!--<figure class="image is-4by3">
-                <img
-                  id="uploadedimage"
-                  src="https://bulma.io/images/placeholders/1280x960.png"
-                  alt="placeholder"
-                />
-              </figure>-->
             </div>
           </div>
         </div>

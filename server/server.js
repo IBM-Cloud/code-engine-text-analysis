@@ -35,6 +35,7 @@ var upload = multer({
     }
   })
 });
+
 /*
  * Default route for the web app
  */
@@ -45,10 +46,20 @@ app.get('/', function(req, res) {
  * Upload an image for object detection
  */
 app.post('/images', upload.array('files', 10), function(req, res, next) {
+
   if(req.files.length > 1){
    res.send('Successfully uploaded ' + req.files.length + ' files to Object Storage')
   }
    res.send('Successfully uploaded ' + req.files.length + ' file to Object Storage')
-})
+});
+
+app.all("*", function(req,res,next) {
+  var err = new Error("Route not supported. Please check your backend URL");
+   next(err);
+});
+
+app.use(function(error, req, res, next) {
+  res.status(500).send(error.message);
+});
 
 app.listen(port, () => console.log(`App listening on port ${port}!`));

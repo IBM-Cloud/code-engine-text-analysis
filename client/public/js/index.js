@@ -1,21 +1,21 @@
 $(document).ready(function() {
   $("p.error").text("");
    $("p.success").text("");
-  $("#classifybtn").attr("disabled", true);
+  $("#uploadbtn").attr("disabled", true);
   $("#file").change(function() {
     showUploadedImage(this);
-    $("#classifybtn").removeAttr("disabled");
+    $("#uploadbtn").removeAttr("disabled");
   });
   $("#imageForm").submit(function() {
-    $("#classifybtn").addClass("is-loading");
+    $("#uploadbtn").addClass("is-loading");
     $("#table tbody tr").remove();
     $(this).ajaxSubmit({
-      error: function(xhr) {
-        $("p.error").text(xhr.status);
+      error: function(data) {
+        $("p.error").text(data);
       },
       success: function(response) {
-        $("#classifybtn").removeClass("is-loading");
-        $("#classifybtn").attr("disabled", true);
+        $("#uploadbtn").removeClass("is-loading");
+        $("#uploadbtn").attr("disabled", true);
         console.log(response);
         $("p.success").text(response.data);
       }
@@ -34,7 +34,7 @@ $(document).ready(function() {
 
 // Shows the preview of uploaded image
 function showUploadedImage(fileInput) {
-  var classifyBtn = document.getElementById("classifybtn");
+  var uploadbtn = document.getElementById("uploadbtn");
   var files = fileInput.files;
   if (files.length > 0) {
     for (var i = 0; i < files.length; i++) {
