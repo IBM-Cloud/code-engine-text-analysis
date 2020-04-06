@@ -9,24 +9,23 @@ require("dotenv").config({
   silent: true
 });
 
-
 const cors = require("cors");
 app.use(cors());
 
 var config = {
-    endpoint: 's3.us-south.cloud-object-storage.appdomain.cloud',
-    apiKeyId: '<API_KEY>',
+    endpoint: process.env.COS_ENDPOINT || 's3.us-south.cloud-object-storage.appdomain.cloud',
+    apiKeyId: process.env.COS_APIKEY,
     ibmAuthEndpoint: 'https://iam.cloud.ibm.com/identity/token',
-    serviceInstanceId: '<RESOURCE_INSTANCE_ID>'
+    serviceInstanceId: process.env.COS_RESOURCE_INSTANCE_ID
 };
 
 var cosClient = new myCOS.S3(config);
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 var upload = multer({
   storage: multerS3({
     s3: cosClient,
-    bucket: '<BUCKET_NAME>',
+    bucket: process.env.COS_BUCKETNAME,
     metadata: function (req, file, cb) {
       cb(null, {fieldName: file.fieldname});
     },
@@ -46,7 +45,6 @@ app.get('/', function(req, res) {
  * Upload an image for object detection
  */
 app.post('/images', upload.array('files', 10), function(req, res, next) {
-
   if(req.files.length > 1){
    res.send('Successfully uploaded ' + req.files.length + ' files to Object Storage')
   }
