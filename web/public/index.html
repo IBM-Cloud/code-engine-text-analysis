@@ -92,7 +92,8 @@
                         type="file"
                         id="file"
                         name="files"
-                        accept="image/jpeg"
+                        accept="image/*"
+                        multiple
                       />
                     </form>
                     <span class="file-cta">
@@ -100,11 +101,8 @@
                         <i class="fas fa-upload"></i>
                       </span>
                       <span class="file-label">
-                        Upload a JPEG image
+                        Upload an image
                       </span>
-                    </span>
-                    <span class="file-name">
-                      No file uploaded
                     </span>
                   </label>
                 </div>
@@ -117,50 +115,26 @@
                   type="submit"
                   form="imageForm"
                 >
-                  Classify image
+                  Upload Files
                 </button>
-                <div class="content">
+                <div class="error">
                   <p class="error has-text-danger is-medium"></p>
                 </div>
-                <div id="modal" class="modal">
-                  <div class="modal-background"></div>
-                  <div class="modal-card">
-                    <header class="modal-card-head">
-                      <p class="modal-card-title">Results</p>
-                      <button
-                        id="modal-close"
-                        class="delete"
-                        aria-label="close"
-                      ></button>
-                    </header>
-                    <section class="modal-card-body">
-                      <table
-                        id="table"
-                        class="table is-striped is-hoverable is-fullwidth"
-                      >
-                        <thead>
-                          <tr>
-                            <th>Category</th>
-                            <th>Confidence</th>
-                          </tr>
-                        </thead>
-                        <tbody></tbody>
-                      </table>
-                    </section>
-                    <footer class="modal-card-foot"></footer>
-                  </div>
-                  <!--<button id="modal-close" class="modal-close is-large" aria-label="close"></button>-->
+                <div class="success">
+                  <p class="success has-text-success is-medium"></p>
                 </div>
               </div>
             </div>
             <div class="column is-5">
-              <figure class="image is-4by3">
+              <div id ="column-multiline" class="columns is-multiline">
+              </div>
+              <!--<figure class="image is-4by3">
                 <img
                   id="uploadedimage"
                   src="https://bulma.io/images/placeholders/1280x960.png"
                   alt="placeholder"
                 />
-              </figure>
+              </figure>-->
             </div>
           </div>
         </div>

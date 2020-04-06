@@ -44,8 +44,11 @@ app.get('/', function(req, res) {
 /*
  * Upload an image for object detection
  */
-app.post('/upload', upload.array('files', 3), function(req, res, next) {
-  res.send('Successfully uploaded ' + req.files.length + ' files!')
+app.post('/api/upload', upload.array('files', 10), function(req, res, next) {
+  if(req.files.length > 1){
+   res.send('Successfully uploaded ' + req.files.length + ' files to Object Storage')
+  }
+   res.send('Successfully uploaded ' + req.files.length + ' file to Object Storage')
 })
 
 app.listen(port, () => console.log(`App listening on port ${port}!`));

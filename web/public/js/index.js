@@ -1,5 +1,6 @@
 $(document).ready(function() {
   $("p.error").text("");
+   $("p.success").text("");
   $("#classifybtn").attr("disabled", true);
   $("#file").change(function() {
     showUploadedImage(this);
@@ -16,6 +17,7 @@ $(document).ready(function() {
         $("#classifybtn").removeClass("is-loading");
         $("#classifybtn").attr("disabled", true);
         console.log(response);
+        $("p.success").text(response.data);
       }
     });
     return false;
@@ -28,7 +30,7 @@ $(document).ready(function() {
       $(".navbar-menu").toggleClass("is-active");
 
   });
-});
+
 
 // Shows the preview of uploaded image
 function showUploadedImage(fileInput) {
@@ -41,9 +43,28 @@ function showUploadedImage(fileInput) {
       if (!file.type.match(imageType)) {
         continue;
       }
-      const fileName = document.querySelector("#file-js-example .file-name");
-      fileName.textContent = files[0].name;
-      var img = document.getElementById("uploadedimage");
+      $("#column-multiline").append('<div class="column is-one-half-desktop is-half-tablet">\
+                  <div class="card">\
+                      <div class="card-image">\
+                          <figure class="image is-3by2">\
+                            <img id="uploadedimg'+i+'" src="https://unsplash.it/300/200/?random&pic=1" alt="placeholder">\
+                          </figure>\
+                          <div class="card-content is-overlay is-clipped">\
+                            <span class="tag is-info">\
+                              Object detection pending...\
+                            </span>\
+                          </div>\
+                      </div>\
+                      <footer class="card-footer">\
+                          <a class="card-footer-item">\
+                            RESULT\
+                          </a>\
+                      </footer>\
+                  </div>\
+                </div>');
+      //const fileName = document.querySelector("#file-js-example .file-name");
+      //fileName.textContent = files[i].name;
+      var img = document.getElementById("uploadedimg"+i);
       img.file = file;
       var reader = new FileReader();
       reader.onload = (function(aImg) {
@@ -55,3 +76,4 @@ function showUploadedImage(fileInput) {
     }
   }
 }
+});
