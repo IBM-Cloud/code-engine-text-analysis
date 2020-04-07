@@ -49,9 +49,9 @@ function showUploadedImage(fileInput) {
                           <figure class="image is-3by2">\
                             <img id="uploadedimg'+i+'" src="https://unsplash.it/300/200/?random&pic=1" alt="placeholder">\
                           </figure>\
-                          <div class="card-content is-overlay is-clipped">\
-                            <span class="tag is-info">\
-                              Object detection pending...\
+                          <div class="card-content is-overlay">\
+                            <span class="tag is-info is-pulled-right">\
+                              Not Analyzed\
                             </span>\
                           </div>\
                       </div>\
