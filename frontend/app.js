@@ -26,7 +26,7 @@ app.get('/501', function(req, res) {
 });
 
 app.get('/', function(req, res) {
-    if (backendURL === undefined || backendURL === " "){
+    if (backendURL === undefined || backendURL === ""){
 // if user is not logged-in redirect back to login page //
         res.redirect('/501')
     }   else{
