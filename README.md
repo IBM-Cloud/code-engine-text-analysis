@@ -7,12 +7,12 @@
 1. On your terminal, move to `frontend` folder and run the below command
    ```
    cd backend
-   docker build . -t ibmcom/tut-frontend
+   docker build . -t ibmcom/frontend
    ```
 2. Move to `backend` folder and run the below command
    ```
    cd frontend
-   docker build . -t ibmcom/tut-backend
+   docker build . -t ibmcom/backend
    ```
 
 ## Test the app locally
