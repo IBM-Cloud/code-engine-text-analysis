@@ -9,7 +9,7 @@ require("dotenv").config({
 const cors = require("cors");
 app.use(cors());
 app.use(express.static(__dirname + '/public/js'));
-const port = 3000;
+const port = process.env.PORT || 3000;
 const MISSING_ENV =
   "Missing required runtime environment variable BACKEND_URL";
 
