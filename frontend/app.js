@@ -34,7 +34,7 @@ app.get('/', function(req, res) {
     }
 });
 /*
- * Upload an image for classification
+ * Upload an image for object detection
  */
 app.post("/uploadimage", function(req, res) {
     req.pipe(
