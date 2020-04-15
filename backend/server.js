@@ -25,7 +25,7 @@ const port = process.env.PORT || 3001;
 var upload = multer({
   storage: multerS3({
     s3: cosClient,
-    bucket: process.env.COS_BUCKETNAME,
+    bucket: process.env.COS_BUCKETNAME+'/images',
     metadata: function (req, file, cb) {
       cb(null, {fieldName: file.fieldname});
     },
@@ -46,9 +46,9 @@ app.get('/', function(req, res) {
  */
 app.post('/images', upload.array('files', 10), function(req, res, next) {
   if(req.files.length > 1){
-   res.send('Successfully uploaded ' + req.files.length + ' files to Object Storage')
+   res.send('Successfully uploaded ' + req.files.length + ' files to Object Storage');
   }
-   res.send('Successfully uploaded ' + req.files.length + ' file to Object Storage')
+  res.send('Successfully uploaded ' + req.files.length + ' file to Object Storage');
 });
 
 app.all("*", function(req,res,next) {
