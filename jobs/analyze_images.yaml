@@ -1,0 +1,18 @@
+apiVersion: coligo.cloud.ibm.com/v1alpha1
+kind: JobRun
+metadata:
+  generateName: analyze-images-
+spec:
+  arraySize: 5
+  retryLimit: 2
+  jobDefinitionSpec:
+    containers:
+    - name: coligo-jobs
+      image: ibmcom/jobs:latest
+      envFrom:
+      - secretRef:
+         name: coligo-secret
+      resources:
+        requests:
+          memory: "128Mi"
+          cpu: "1"

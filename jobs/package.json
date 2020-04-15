@@ -1,0 +1,16 @@
+{
+  "name": "jobs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vidyasagar Machupalli",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "ibm-cos-sdk": "^1.6.0",
+    "ibm-watson": "^5.4.0"
+  }
+}
