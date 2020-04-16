@@ -3,12 +3,12 @@ kind: JobRun
 metadata:
   generateName: analyze-images-
 spec:
-  arraySize: 5
+  arraySize: 1
   retryLimit: 2
   jobDefinitionSpec:
     containers:
     - name: coligo-jobs
-      image: ibmcom/jobs:latest
+      image: ibmcom/backend-job
       envFrom:
       - secretRef:
          name: coligo-secret
