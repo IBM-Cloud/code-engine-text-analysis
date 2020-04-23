@@ -11,11 +11,8 @@ app.use(cors());
 app.use(express.static(__dirname + '/public/js'));
 app.use(express.static(__dirname + '/public/images'))
 const port = process.env.PORT || 3000;
-const MISSING_ENV =
-  "Missing required runtime environment variable BACKEND_URL";
 
 const backendURL = process.env.BACKEND_URL;
-
 console.log("backend URL: " + backendURL);
 
 /*

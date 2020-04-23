@@ -16,7 +16,7 @@ $(document).ready(function () {
       success: function (response) {
         $("#uploadbtn").removeClass("is-loading");
         $("#uploadbtn").attr("disabled", true);
-        console.log(response);
+        console.log(response.data);
         $("p.success").text(response.data);
       },
     });
