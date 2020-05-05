@@ -12,13 +12,15 @@ $(document).ready(function () {
     $("#table tbody tr").remove();
     $(this).ajaxSubmit({
       error: function (data) {
-        $("p.error").text(data);
-      },
-      success: function (response) {
+        $("p.error").text(data.statusText + ":" + "Check your BACKEND URL");
         $("#uploadbtn").removeClass("is-loading");
         $("#uploadbtn").attr("disabled", true);
+      },
+      success: function (response) {
         console.log(response.data);
         $("p.success").text(response.data);
+        $("#uploadbtn").removeClass("is-loading");
+        $("#uploadbtn").attr("disabled", true);
       },
     });
     return false;
