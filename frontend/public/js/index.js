@@ -3,6 +3,7 @@ $(document).ready(function () {
   $("p.success").text("");
   $("#uploadbtn").attr("disabled", true);
   $("#file").change(function () {
+    $("#column-multiline").empty();
     showUploadedImage(this);
     $("#uploadbtn").removeAttr("disabled");
   });

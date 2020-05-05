@@ -10,6 +10,7 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.static(__dirname + '/public/js'));
 app.use(express.static(__dirname + '/public/images'))
+app.use(express.static(__dirname + '/public/css'))
 const port = process.env.PORT || 3000;
 
 const backendURL = process.env.BACKEND_URL;
