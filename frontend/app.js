@@ -19,15 +19,10 @@ console.log("backend URL: " + backendURL);
 /*
  * Default route for the web app
  */
-
-app.get('/501', function(req, res) {
-  res.sendFile(__dirname + "/public/501.html");
-});
-
 app.get('/', function(req, res) {
     if (backendURL === undefined || backendURL === ""){
 // if user is not logged-in redirect back to login page //
-        res.redirect('/501')
+       res.sendFile(__dirname + "/public/501.html");
     }   else{
         res.sendFile(__dirname + "/public/index.html");
     }
