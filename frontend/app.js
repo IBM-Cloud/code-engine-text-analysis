@@ -34,7 +34,7 @@ app.post("/uploadimage", function(req, res) {
     req.pipe(
       request.post(
         {
-          url: backendURL,
+          url: backendURL+"/images",
           gzip: true,
           agentOptions: {
             rejectUnauthorized: false
