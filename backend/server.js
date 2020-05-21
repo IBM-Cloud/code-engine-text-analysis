@@ -14,8 +14,9 @@ app.use(cors());
 
 const port = process.env.PORT || 3001;
 
-function uploadFilesToCOS(req, res, next) {
-  var config = {
+
+function getCosClient(){
+    var config = {
   endpoint:
     process.env.COS_ENDPOINT ||
     "s3.us-south.cloud-object-storage.appdomain.cloud",
@@ -25,10 +26,14 @@ function uploadFilesToCOS(req, res, next) {
 };
 
 var cosClient = new myCOS.S3(config);
+return cosClient;
+}
 
+// To upload files to Cloud Object Storage
+function uploadFilesToCOS(req, res, next) {
 var upload = multer({
   storage: multerS3({
-    s3: cosClient,
+    s3: getCosClient(),
     bucket: process.env.COS_BUCKETNAME+'/images',
     metadata: function (req, file, cb) {
       cb(null, { fieldName: file.fieldname });
@@ -56,6 +61,52 @@ var upload = multer({
   });
 }
 
+function getBucketContents(req, res, next) {
+    let cos = getCosClient();
+    let bucketName = process.env.COS_BUCKETNAME;
+    var resultDict = {};
+    var result;
+    console.log(`Retrieving bucket contents from: ${bucketName}`);
+    return cos.listObjects(
+        {Bucket: bucketName,
+        Prefix: 'results'},
+    ).promise()
+    .then(async (data) => {
+        if (data != null && data.Contents != null) {
+            for (var i = 0; i < data.Contents.length; i++) {
+                var itemKey = data.Contents[i].Key;
+                var itemSize = data.Contents[i].Size;
+                console.log(`Item: ${itemKey} (${itemSize} bytes).`)
+                result = await getItem(bucketName, itemKey);
+                resultDict[itemKey] = result;
+            }
+            res.send(resultDict);
+        }    
+    })
+    .catch((e) => {
+        console.error(`ERROR: ${e.code} - ${e.message}\n`);
+    });
+    
+}
+
+function getItem(bucketName, itemName) {
+    let cos = getCosClient();
+    let result;
+    console.log(`Retrieving item from bucket: ${bucketName}, key: ${itemName}`);
+    return cos.getObject({
+        Bucket: bucketName, 
+        Key: itemName
+    }).promise()
+    .then((data) => {
+        if (data != null) {
+            //console.log('File Contents: ' + Buffer.from(data.Body).toString());
+            return JSON.parse(data.Body);
+        }    
+    })
+    .catch((e) => {
+        console.error(`ERROR: ${e.code} - ${e.message}\n`);
+    });
+}
 /*
  * Default route for the web app
  */
@@ -66,6 +117,10 @@ app.get("/", function (req, res) {
  * Upload an image for object detection
  */
 app.post("/images", uploadFilesToCOS, function(req, res, next) {
+  next();
+});
+
+app.post("/results", getBucketContents, function(req, res, next) {
   next();
 });
 

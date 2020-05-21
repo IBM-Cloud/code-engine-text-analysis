@@ -54,6 +54,30 @@ app.post("/uploadimage", function(req, res) {
   
 });
 
+app.post("/analyzeimage", function(req, res) {
+    req.pipe(
+      request.post(
+        {
+          url: backendURL+"/results",
+          agentOptions: {
+            rejectUnauthorized: false
+          }
+        },
+        function(error, resp, body) {
+          if (error) {
+            res.status(400).send(error.message);
+          }
+          else{
+          //console.log(body);
+          res.send({ data: body });
+          }
+        }
+      )
+    );
+  
+});
+
+
 app.use(function(error, req, res, next) {
   res.status(500).send(error.message);
 });
