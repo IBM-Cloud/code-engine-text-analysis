@@ -11,7 +11,9 @@ spec:
       image: ibmcom/backend-job
       envFrom:
       - secretRef:
-         name: coligo-secret
+         name: cos-secret
+      - secretRef:
+         name: vr-secret
       resources:
         requests:
           memory: "128Mi"
