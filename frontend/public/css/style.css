@@ -2,7 +2,7 @@ html {
   font-size: 16px;
 }
 body {
-  font-family: sans-serif;
+  font-family: 'IBM Plex Sans', sans-serif;
   background-color: #f5f6f7;
 }
 
@@ -27,4 +27,8 @@ body {
   border-radius: 9px;
   background: #eaf1f3;
   box-shadow: 5px 5px 8px #bec3c5, -5px -5px 8px #ffffff;
+}
+
+.tag, .table{
+  font-family: 'IBM Plex Mono';
 }

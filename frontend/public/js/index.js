@@ -21,14 +21,15 @@ $(document).ready(function () {
         $("p.success").text(response.data);
         $("#uploadbtn").removeClass("is-loading");
         $("#uploadbtn").attr("disabled", true);
-        
+        $("#analyzebtn").removeAttr("disabled");
       },
     });
     return false;
   });
-  $("#analyzebtn").removeAttr("disabled");
   $("#analyzebtn").click(function () {
-    console.log("Button Clicked");
+    $("#analyzebtn").attr("disabled", true);
+    $("p.success").text("Analyzing...");
+    $(".tag").text("Analyzing...");
     $.ajax({
       type: "POST",
       url: "/analyzeimage",
@@ -37,33 +38,49 @@ $(document).ready(function () {
         var data = JSON.parse(response.data);
         //console.log(data);
         //var matched = $("#column-multiline footer").length;
-        $("p.card-footer-item").each(function(index) {
+        $("p.card-footer-item").each(function (index) {
           //console.log( index + ": " + $( this ).text() );
           var id = $(this).attr("id");
           //console.log(id);
-          var value = "results/"+id.toString()+".json";
+          var value = "results/" + id.toString() + ".json";
           //console.log(value);
           //console.log(data[value]);
-          var result = data[value].images[0].classifiers[0].classes.sort(function (
-          a,
-          b
-        ) {
-          return b.score - a.score;
-        });
-        console.log(result);
-        if(result.length > 1)
-        {
-          $(this).parent(".card-footer").append('<table class="table is-striped is-fullwidth"><tbody></tbody></table>');
+          var result = data[value].images[0].classifiers[0].classes.sort(
+            function (a, b) {
+              return b.score - a.score;
+            }
+          );
+          console.log(result);
+          if (result.length > 1) {
+            $(this)
+              .parent(".card-footer")
+              .append(
+                '<table class="table is-striped is-fullwidth"><tbody></tbody></table>'
+              );
 
-          for(var i=0; i<result.length ;i++)
-          {
-            $(this).parent(".card-footer").children(".table").children("tbody").append('<tr><td>'+result[i].class+'</td><td>'+result[i].score+'</td></tr>');
+            for (var i = 0; i < result.length; i++) {
+              $(this)
+                .parent(".card-footer")
+                .children(".table")
+                .children("tbody")
+                .append(
+                  "<tr><td>" +
+                    result[i].class +
+                    "</td><td>" +
+                    result[i].score +
+                    "</td></tr>"
+                );
+            }
+            $(this).remove();
+            $(".tag").text("Analyzed");
+            $("p.success").text("");
           }
-          $(this).remove();
-        }
         });
-      
       },
+      error: function (data) {
+        $("p.error").text(data.statusText + ":" + "Check logs for more info");
+        $("#analyzebtn").attr("disabled", true);
+      }
     });
   });
 
