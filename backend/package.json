@@ -1,7 +1,7 @@
 {
   "name": "coligo-object-detection-backend",
   "version": "1.0.0",
-  "description": "Backend server for Coligo Object Detection",
+  "description": "Backend server for Coligo Image Classification",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

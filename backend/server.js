@@ -114,7 +114,7 @@ app.get("/", function (req, res) {
   res.send("Hello World! from backend");
 });
 /*
- * Upload an image for object detection
+ * Upload an image for Image classification
  */
 app.post("/images", uploadFilesToCOS, function(req, res, next) {
   next();

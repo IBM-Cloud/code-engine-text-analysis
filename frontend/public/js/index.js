@@ -21,18 +21,18 @@ $(document).ready(function () {
         $("p.success").text(response.data);
         $("#uploadbtn").removeClass("is-loading");
         $("#uploadbtn").attr("disabled", true);
-        $("#analyzebtn").removeAttr("disabled");
+        $("#classifybtn").removeAttr("disabled");
       },
     });
     return false;
   });
-  $("#analyzebtn").click(function () {
-    $("#analyzebtn").attr("disabled", true);
-    $("p.success").text("Analyzing...");
-    $(".tag").text("Analyzing...");
+  $("#classifybtn").click(function () {
+    $("#classifybtn").attr("disabled", true);
+    $("p.success").text("classifying...");
+    $(".tag").text("classifying...");
     $.ajax({
       type: "POST",
-      url: "/analyzeimage",
+      url: "/classifyimage",
       success: function (response) {
         //console.log(response.data);
         var data = JSON.parse(response.data);
@@ -72,14 +72,14 @@ $(document).ready(function () {
                 );
             }
             $(this).remove();
-            $(".tag").text("Analyzed");
+            $(".tag").text("classified");
             $("p.success").text("");
           }
         });
       },
       error: function (data) {
         $("p.error").text(data.statusText + ":" + "Check logs for more info");
-        $("#analyzebtn").attr("disabled", true);
+        $("#classifybtn").attr("disabled", true);
       }
     });
   });
@@ -114,7 +114,7 @@ $(document).ready(function () {
                           </figure>\
                           <div class="card-content is-overlay">\
                             <span class="tag is-info is-pulled-right">\
-                              Not Analyzed\
+                              Not classified\
                             </span>\
                           </div>\
                       </div>\

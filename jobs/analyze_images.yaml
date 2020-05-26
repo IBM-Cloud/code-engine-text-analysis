@@ -1,7 +1,7 @@
 apiVersion: coligo.cloud.ibm.com/v1alpha1
 kind: JobRun
 metadata:
-  generateName: analyze-images-
+  generateName: classify-images-
 spec:
   arraySize: 1
   retryLimit: 2
