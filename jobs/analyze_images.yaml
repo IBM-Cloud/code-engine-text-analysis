@@ -11,7 +11,7 @@ spec:
       image: ibmcom/backend-job
       envFrom:
       - secretRef:
-         name: cos-secret
+         name: backend-binding-request
       - secretRef:
          name: vr-secret
       resources:
