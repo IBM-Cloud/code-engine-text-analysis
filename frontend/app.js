@@ -24,8 +24,30 @@ app.get('/', function(req, res) {
 // if user is not logged-in redirect back to login page //
        res.sendFile(__dirname + "/public/501.html");
     }   else{
-        res.sendFile(__dirname + "/public/index.html");
+        res.sendFile(__dirname + "/public/index2.html");
     }
+});
+
+app.post('/items', function(req, res){
+  req.pipe(
+    request.post(
+      {
+        url: backendURL+"/items?prefix=images",
+        agentOptions: {
+          rejectUnauthorized: false
+        }
+      },
+      function(error, resp, body) {
+        if (error) {
+          res.status(400).send(error.message);
+        }
+        else{
+        //console.log(body);
+        res.send({ data: body });
+        }
+      }
+    )
+  );
 });
 /*
  * Upload an image for Image classification

@@ -23,6 +23,8 @@ function getCosClient(){
   apiKeyId: process.env.COS_APIKEY,
   ibmAuthEndpoint: "https://iam.cloud.ibm.com/identity/token",
   serviceInstanceId: process.env.COS_RESOURCE_INSTANCE_ID,
+  credentials: new myCOS.Credentials('c3d38fdb9e0948c6b9e3410a115e7a45', '56e147c24d6cc1d13afcba17a57418ab0bce52b4f3bb0ce6'),
+  signatureVersion: 'v4'
 };
 
 var cosClient = new myCOS.S3(config);
@@ -61,57 +63,74 @@ var upload = multer({
   });
 }
 
-function getBucketContents(req, res, next) {
+async function getBucketContents(req, res, next, prefix) {
     let cos = getCosClient();
     let bucketName = process.env.COS_BUCKETNAME;
     var resultDict = {};
     var result;
     console.log(`Retrieving bucket contents from: ${bucketName}`);
-    return cos.listObjects(
-        {Bucket: bucketName,
-        Prefix: 'results'},
-    ).promise()
-    .then(async (data) => {
-        if (data != null && data.Contents != null) {
-            for (var i = 0; i < data.Contents.length; i++) {
-                var itemKey = data.Contents[i].Key;
-                var itemSize = data.Contents[i].Size;
-                console.log(`Item: ${itemKey} (${itemSize} bytes).`)
-                result = await getItem(bucketName, itemKey);
-                resultDict[itemKey] = result;
-            }
-            res.send(resultDict);
-        }    
-    })
-    .catch((e) => {
-        console.error(`ERROR: ${e.code} - ${e.message}\n`);
-    });
+    try {
+    const data = await cos.listObjects({
+    Bucket: bucketName,
+      Prefix: prefix
+    }).promise();
+    if (data != null && data.Contents != null) {
+      for (var i = 0; i < data.Contents.length; i++) {
+        var itemKey = data.Contents[i].Key;
+        var itemSize = data.Contents[i].Size;
+        console.log(`Item: ${itemKey} (${itemSize} bytes).`);
+        result = await getItem(bucketName, itemKey, prefix);
+        resultDict[itemKey] = result;
+      }
+      res.send(resultDict);
+    }
+  }
+  catch (e) {
+    console.error(`ERROR: ${e.code} - ${e.message}\n`);
+  }
     
 }
 
-function getItem(bucketName, itemName) {
+async function getItem(bucketName, itemName, prefix) {
     let cos = getCosClient();
-    let result;
     console.log(`Retrieving item from bucket: ${bucketName}, key: ${itemName}`);
-    return cos.getObject({
-        Bucket: bucketName, 
-        Key: itemName
-    }).promise()
-    .then((data) => {
-        if (data != null) {
-            //console.log('File Contents: ' + Buffer.from(data.Body).toString());
-            return JSON.parse(data.Body);
-        }    
-    })
-    .catch((e) => {
-        console.error(`ERROR: ${e.code} - ${e.message}\n`);
-    });
+    try {
+    const data = await cos.getObject({
+      Bucket: bucketName,
+      Key: itemName
+    }).promise();
+    if (data != null) {
+      if (prefix === "results") {
+        return JSON.parse(data.Body);
+      }
+      else {
+        /*var params = {Bucket: bucketName, Key: itemName};
+var promise = cos.getSignedUrlPromise('getObject', params);
+promise.then(function(url) {
+  console.log('The URL is', url);
+}).catch (function(err) {
+  console.log('error: ', err);
+});*/
+        return Buffer.from(data.Body).toString("base64");
+      }
+    }
+  }
+  catch (e) {
+    console.error(`ERROR: ${e.code} - ${e.message}\n`);
+  }
 }
 /*
  * Default route for the web app
  */
 app.get("/", function (req, res) {
   res.send("Hello World! from backend");
+});
+
+app.post("/items", function(req,res,next){
+  var prefix = req.query.prefix;
+  console.log(prefix);
+  getBucketContents(req,res,next,prefix);
+  //next();
 });
 /*
  * Upload an image for Image classification
