@@ -1,10 +1,12 @@
 $(document).ready(function () {
+  $('.loader-wrapper').addClass('is-active');
+  getUploadedImages();
   $("p.error").text("");
   $("p.success").text("");
   $("#uploadbtn").attr("disabled", true);
   $("#file").change(function () {
-    $("#column-multiline").empty();
-    showUploadedImage(this);
+    //$("#column-multiline").empty();
+   // showUploadedImage(this);
     $("#uploadbtn").removeAttr("disabled");
   });
   $("#imageForm").submit(function () {
@@ -22,61 +24,7 @@ $(document).ready(function () {
         $("#uploadbtn").removeClass("is-loading");
         $("#uploadbtn").attr("disabled", true);
         $("#classifybtn").removeAttr("disabled");
-        $.ajax({
-          type: "POST",
-          url: "/items",
-          success: function (response) {
-            //console.log(response);
-            var data = JSON.parse(response.data);
-            console.log(data);
-            //var matched = $("#column-multiline footer").length;
-            //var imageElem = document.createElement('img');
-            // Just use the toString() method from your buffer instance
-            // to get date as base64 type
-            //imageElem.src = 'data:image/jpeg;base64,' + buf.toString('base64');
-            console.log(Object.keys(data).length);
-            for (var i = 0; i < Object.keys(data).length; i++) {
-              var buf = Object.values(data)[i];
-              console.log(buf);
-              $("#column-multiline").append(
-                '<div class="column is-one-half-desktop is-half-tablet">\
-          <div class="card">\
-              <div class="card-image">\
-                  <figure class="image is-3by2">\
-                    <img id="' +
-                  file.name +
-                  i +
-                  '" src="data:image/jpeg;base64,' +
-                  buf +
-                  '" alt="placeholder">\
-                  </figure>\
-                  <div class="card-content is-overlay">\
-                    <span class="tag is-info is-pulled-right">\
-                      Not classified\
-                    </span>\
-                  </div>\
-              </div>\
-              <footer class="card-footer">\
-                  <p id="' +
-                  file.name +
-                  '"class="card-footer-item">\
-                    ' +
-                  file.name +
-                  "\
-                  </p>\
-              </footer>\
-          </div>\
-        </div>"
-              );
-            }
-          },
-          error: function (data) {
-            $("p.error").text(
-              data.statusText + ":" + "Check logs for more info"
-            );
-            $("#classifybtn").attr("disabled", true);
-          },
-        });
+        getUploadedImages();
       },
     });
     return false;
@@ -146,6 +94,66 @@ $(document).ready(function () {
     $(".navbar-menu").toggleClass("is-active");
   });
 
+  function getUploadedImages(){
+    console.log("I am called");
+    $.ajax({
+      type: "POST",
+      url: "/items",
+      success: function (response) {
+        $("#column-multiline").empty();
+        //console.log(response);
+        var data = JSON.parse(response.data);
+        console.log(data);
+        //var matched = $("#column-multiline footer").length;
+        //var imageElem = document.createElement('img');
+        // Just use the toString() method from your buffer instance
+        // to get date as base64 type
+        //imageElem.src = 'data:image/jpeg;base64,' + buf.toString('base64');
+        console.log(Object.keys(data).length);
+        for (var i = 0; i < Object.keys(data).length; i++) {
+          var buffer = Object.values(data)[i];
+          console.log(buffer);
+          let fileName = Object.keys(data)[i].split("/")[1];
+          $("#column-multiline").append(
+            '<div class="column is-one-quarter-desktop is-half-tablet">\
+      <div class="card">\
+          <div class="card-image">\
+              <figure class="image is-3by2">\
+                <img id="' +
+              fileName +
+              '" src="data:image/jpeg;base64,' +
+              buffer +
+              '" alt="placeholder">\
+              </figure>\
+              <div class="card-content is-overlay">\
+                <span class="tag is-info is-pulled-right">\
+                  Not classified\
+                </span>\
+              </div>\
+          </div>\
+          <footer class="card-footer">\
+              <p id="' +
+              fileName +
+              '"class="card-footer-item">\
+                ' +
+              fileName +
+              "\
+              </p>\
+          </footer>\
+      </div>\
+    </div>"
+          );
+        }
+        $('.loader-wrapper').removeClass('is-active');
+      },
+      error: function (data) {
+        $("p.error").text(
+          data.statusText + ":" + "Check logs for more info"
+        );
+      }
+    });
+    
+  }
   // Shows the preview of uploaded image
   function showUploadedImage(fileInput) {
     var uploadbtn = document.getElementById("uploadbtn");
