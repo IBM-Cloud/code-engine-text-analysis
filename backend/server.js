@@ -119,6 +119,25 @@ promise.then(function(url) {
     console.error(`ERROR: ${e.code} - ${e.message}\n`);
   }
 }
+
+async function deleteItem(bucketName, itemName, prefix) {
+  let cos = getCosClient();
+  let bucketName = process.env.COS_BUCKETNAME;
+  console.log(`Deleting item: ${itemName}`);
+  try {
+    await cos.deleteObject({
+      Bucket: bucketName,
+      Key: itemName,
+      Prefix: prefix
+    }).promise();
+    console.log(`Item: ${itemName} deleted!`);
+  }
+  catch (e) {
+    console.error(`ERROR: ${e.code} - ${e.message}\n`);
+  }
+}
+
+
 /*
  * Default route for the web app
  */
@@ -126,7 +145,7 @@ app.get("/", function (req, res) {
   res.send("Hello World! from backend");
 });
 
-app.post("/items", function(req,res,next){
+app.get("/items", function(req,res,next){
   var prefix = req.query.prefix;
   console.log(prefix);
   getBucketContents(req,res,next,prefix);
@@ -141,6 +160,14 @@ app.post("/images", uploadFilesToCOS, function(req, res, next) {
 
 app.post("/results", getBucketContents, function(req, res, next) {
   next();
+});
+
+app.delete("/item", function(req,res,next){
+  var itemName = req.query.filename;
+  console.log(prefix);
+  deleteItem(null, itemName, "images");
+  deleteItem(null, itemName, "results");
+  //next();
 });
 
 app.all("*", function (req, res, next) {

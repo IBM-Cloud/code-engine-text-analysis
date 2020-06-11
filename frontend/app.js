@@ -28,9 +28,9 @@ app.get('/', function(req, res) {
     }
 });
 
-app.post('/items', function(req, res){
+app.get('/items', function(req, res){
   req.pipe(
-    request.post(
+    request.get(
       {
         url: backendURL+"/items?prefix=images",
         agentOptions: {
@@ -97,6 +97,30 @@ app.post("/classifyimage", function(req, res) {
       )
     );
   
+});
+
+app.delete("/image", function(req, res) {
+  var itemName = req.query.filename;
+  req.pipe(
+    request.delete(
+      {
+        url: backendURL+"/item?filename="+itemName,
+        agentOptions: {
+          rejectUnauthorized: false
+        }
+      },
+      function(error, resp, body) {
+        if (error) {
+          res.status(400).send(error.message);
+        }
+        else{
+        //console.log(body);
+        res.send({ data: body });
+        }
+      }
+    )
+  );
+
 });
 
 

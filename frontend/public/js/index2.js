@@ -3,32 +3,48 @@ $(document).ready(function () {
   getUploadedImages();
   $("p.error").text("");
   $("p.success").text("");
-  $("#uploadbtn").attr("disabled", true);
+  $("#uploadbtn").click(function(e){
+    $("#file").click();
+    e.preventDefault();
+  });
   $("#file").change(function () {
     //$("#column-multiline").empty();
    // showUploadedImage(this);
-    $("#uploadbtn").removeAttr("disabled");
+    //$("#uploadbtn").removeAttr("disabled");
+    $("#uploadbtn").submit();
+    console.log("i am here");
   });
+  
   $("#imageForm").submit(function () {
+    console.log("i am submitted");
     $("#uploadbtn").addClass("is-loading");
     $("#table tbody tr").remove();
     $(this).ajaxSubmit({
       error: function (data) {
         $("p.error").text(data.statusText + ":" + "Check your BACKEND URL");
         $("#uploadbtn").removeClass("is-loading");
-        $("#uploadbtn").attr("disabled", true);
       },
       success: function (response) {
+        console.log("i am here too");
         console.log(response.data);
         $("p.success").text(response.data);
         $("#uploadbtn").removeClass("is-loading");
-        $("#uploadbtn").attr("disabled", true);
         $("#classifybtn").removeAttr("disabled");
         getUploadedImages();
       },
     });
     return false;
   });
+
+  // to delete an image
+  $("a.is-pulled-right").click(function (){
+    console.log("delete called");
+    var id=$(this).parent(".card-content").parent(".card").attr("id");
+    var filename = id.split("-")[0];
+
+    deleteImage(filename);
+  });
+
   $("#classifybtn").click(function () {
     $("#classifybtn").attr("disabled", true);
     $("p.success").text("classifying...");
@@ -97,7 +113,7 @@ $(document).ready(function () {
   function getUploadedImages(){
     console.log("I am called");
     $.ajax({
-      type: "POST",
+      type: "GET",
       url: "/items",
       success: function (response) {
         $("#column-multiline").empty();
@@ -116,9 +132,11 @@ $(document).ready(function () {
           let fileName = Object.keys(data)[i].split("/")[1];
           $("#column-multiline").append(
             '<div class="column is-one-quarter-desktop is-half-tablet">\
-      <div class="card">\
+      <div class="card" id="' +
+      fileName +
+      '-card">\
           <div class="card-image">\
-              <figure class="image is-3by2">\
+              <figure class="image is-4by3">\
                 <img id="' +
               fileName +
               '" src="data:image/jpeg;base64,' +
@@ -126,9 +144,9 @@ $(document).ready(function () {
               '" alt="placeholder">\
               </figure>\
               <div class="card-content is-overlay">\
-                <span class="tag is-info is-pulled-right">\
+                <span class="tag is-info is-pulled-left">\
                   Not classified\
-                </span>\
+                </span><a href="#" class="is-pulled-right"><span class="icon"><i class="fas fa-trash"></i> </span></a> \
               </div>\
           </div>\
           <footer class="card-footer">\
@@ -138,7 +156,8 @@ $(document).ready(function () {
                 ' +
               fileName +
               "\
-              </p>\
+              </p>  \
+              \
           </footer>\
       </div>\
     </div>"
@@ -153,6 +172,21 @@ $(document).ready(function () {
       }
     });
     
+  }
+
+  function deleteImage(filename){
+    $.ajax({
+      type: "DELETE",
+      url: "/image?filename="+filename,
+      success: function (response) {
+        
+      },
+      error: function (data) {
+        $("p.error").text(
+          data.statusText + ":" + "Check logs for more info"
+        );
+      }
+    });
   }
   // Shows the preview of uploaded image
   function showUploadedImage(fileInput) {
