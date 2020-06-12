@@ -3,10 +3,7 @@ $(document).ready(function () {
   getUploadedImages();
   $("p.error").text("");
   $("p.success").text("");
-  $("#uploadbtn").click(function(e){
-    $("#file").click();
-    e.preventDefault();
-  });
+  
   $("#file").change(function () {
     //$("#column-multiline").empty();
    // showUploadedImage(this);
@@ -37,12 +34,26 @@ $(document).ready(function () {
   });
 
   // to delete an image
-  $("a.is-pulled-right").click(function (){
+  $("*").click(function (e){
     console.log("delete called");
-    var id=$(this).parent(".card-content").parent(".card").attr("id");
-    var filename = id.split("-")[0];
+    e.preventDefault();
+    e.stopPropagation();
+    console.log($(e.target.nodeName));
+    var nodeName = e.target.nodeName;
+    if(nodeName === "span" || nodeName === "span.icon"){
+    var filename=$(e.target).parents("a").attr("id");
 
     deleteImage(filename);
+    getUploadedImages();
+    $("#column-multiline").remove($(e.target).parents(".card"));
+    }
+    else if(nodeName === "button")
+    {
+      $("#uploadbtn").click(function(e){
+        $("#file").click();
+        e.preventDefault();
+      });
+    }
   });
 
   $("#classifybtn").click(function () {
@@ -146,7 +157,9 @@ $(document).ready(function () {
               <div class="card-content is-overlay">\
                 <span class="tag is-info is-pulled-left">\
                   Not classified\
-                </span><a href="#" class="is-pulled-right"><span class="icon"><i class="fas fa-trash"></i> </span></a> \
+                </span><a href="#" id="' +
+                fileName +
+                '" class="is-pulled-right"><span class="icon"><i class="fas fa-trash"></i> </span></a> \
               </div>\
           </div>\
           <footer class="card-footer">\

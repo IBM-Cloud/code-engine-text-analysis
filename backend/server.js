@@ -120,17 +120,22 @@ promise.then(function(url) {
   }
 }
 
-async function deleteItem(bucketName, itemName, prefix) {
+async function deleteItem(req,res,next,bucketName, itemName, prefix) {
   let cos = getCosClient();
-  let bucketName = process.env.COS_BUCKETNAME;
+  let bucketname = process.env.COS_BUCKETNAME;
+  itemName = prefix +"/"+ itemName;
+  if(prefix==="results")
+  {
+    itemName = itemName+".json";
+  }
   console.log(`Deleting item: ${itemName}`);
   try {
     await cos.deleteObject({
-      Bucket: bucketName,
-      Key: itemName,
-      Prefix: prefix
+      Bucket: bucketname,
+      Key: itemName
     }).promise();
     console.log(`Item: ${itemName} deleted!`);
+    res.send(`Item: ${itemName} deleted!`);
   }
   catch (e) {
     console.error(`ERROR: ${e.code} - ${e.message}\n`);
@@ -164,9 +169,9 @@ app.post("/results", getBucketContents, function(req, res, next) {
 
 app.delete("/item", function(req,res,next){
   var itemName = req.query.filename;
-  console.log(prefix);
-  deleteItem(null, itemName, "images");
-  deleteItem(null, itemName, "results");
+  console.log(itemName);
+  deleteItem(req,res,next,null, itemName, "images");
+  deleteItem(req,res,next,null, itemName, "results");
   //next();
 });
 
