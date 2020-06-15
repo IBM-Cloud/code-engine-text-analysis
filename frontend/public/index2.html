@@ -60,12 +60,15 @@
                   id="uploadbtn"
                   type="submit"
                   form="imageForm"
-                >
-                  Upload Files
+                ><span class="file-icon">
+                  <i class="fas fa-upload"></i>
+                </span>
+                Upload image
                 </button>
                     </form>
                   </label>
                 </div>
+                <button class="button is-medium is-info is-outlined"><i class="fas fa-redo"></i></button>
                 
             </div>
           </div>
@@ -73,6 +76,7 @@
 
     </nav>
       </div>
+        <div class='notifications'></div>
       <div class="hero-body">
           <div class="loader-wrapper">
             <div class="loader is-loading"></div>
@@ -80,7 +84,11 @@
         <div class="container has-text-centered">
           <div class="columns is-vcentered">
             <div class="column">
-              <div id ="column-multiline" class="columns is-multiline">
+             <!-- <fieldset class="fieldset">
+                <legend class="heading">IMAGES</legend>
+              
+              </fieldset>-->
+              <div id ="column-multiline" class="columns is-multiline"></div>
               </div>
             </div>
           </div>

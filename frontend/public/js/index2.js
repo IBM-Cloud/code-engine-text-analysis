@@ -4,6 +4,10 @@ $(document).ready(function () {
   $("p.error").text("");
   $("p.success").text("");
   
+  $("#uploadbtn").click(function(e){
+    $("#file").click();
+    e.preventDefault();
+  });
   $("#file").change(function () {
     //$("#column-multiline").empty();
    // showUploadedImage(this);
@@ -18,13 +22,14 @@ $(document).ready(function () {
     $("#table tbody tr").remove();
     $(this).ajaxSubmit({
       error: function (data) {
-        $("p.error").text(data.statusText + ":" + "Check your BACKEND URL");
+        showNotification(data.statusText + ":" + "Check your BACKEND URL","is-danger");
         $("#uploadbtn").removeClass("is-loading");
       },
       success: function (response) {
         console.log("i am here too");
         console.log(response.data);
-        $("p.success").text(response.data);
+        //$("p.success").text(response.data);
+        showNotification(response.data,"is-primary");
         $("#uploadbtn").removeClass("is-loading");
         $("#classifybtn").removeAttr("disabled");
         getUploadedImages();
@@ -33,29 +38,76 @@ $(document).ready(function () {
     return false;
   });
 
-  // to delete an image
-  $("*").click(function (e){
-    console.log("delete called");
-    e.preventDefault();
-    e.stopPropagation();
-    console.log($(e.target.nodeName));
-    var nodeName = e.target.nodeName;
-    if(nodeName === "span" || nodeName === "span.icon"){
-    var filename=$(e.target).parents("a").attr("id");
+/***************************************
+*********NOTIFICATIONS****************
+***************************************/
+function showNotification(data,cssclass)
+{
+  notify(data, cssclass, 5000);
+  $(".notification").text(data);
+  $(".notification").addClass(cssclass);
+  $(".notification").removeClass("is-hidden");
+  //$(".notification").append('<button class="delete" type="button">Close</button>');
+}
 
-    deleteImage(filename);
-    getUploadedImages();
-    $("#column-multiline").remove($(e.target).parents(".card"));
-    }
-    else if(nodeName === "button")
-    {
-      $("#uploadbtn").click(function(e){
-        $("#file").click();
-        e.preventDefault();
-      });
+  $(".notification").addClass('is-hidden');
+  $(document).on('click', '.notification > button.delete', function() {
+    $(this).parent().addClass('is-hidden');
+    return false;
+});
+
+function stringGen(len) {
+  var text = "";
+  var charset = "abcdefghijklmnopqrstuvwxyz0123456789";
+  for (var i = 0; i < len; i++)
+    text += charset.charAt(Math.floor(Math.random() * charset.length));
+  return text;
+}
+
+function notify(msg, mode, duration) {
+  var classy = stringGen(9);
+  $('.notifications').append(`<div id='${classy}' class='notification ${mode} slideInRight'>${msg}</div>`)
+  $('.notification').click(function() {
+    $(this).removeClass('slideInRight');
+    $(this).addClass('slideOutRight');
+    setTimeout(function() {
+      $(this).remove();
+    }, 350);
+  });
+  setTimeout(function() {
+    $(`#${classy}`).removeClass('slideInRight');
+    $(`#${classy}`).addClass('slideOutRight');
+    setTimeout(function() {
+      $(`#${classy}`).remove();
+    }, 350);
+  }, duration);
+}
+
+/* DELETE functionality*/
+function deleteImage(filename){
+  $.ajax({
+    type: "DELETE",
+    url: "/image?filename="+filename,
+    success: function (response) {
+      showNotification(response.data,"is-primary");
+    },
+    error: function (data) {
+      $("p.error").text(
+        data.statusText + ":" + "Check logs for more info"
+      );
     }
   });
-
+}
+function addClickToDelete(){
+  $(".card-content").on("click","a", function (){
+    console.log("Clicked!!")
+    var filename=$(this).attr("id");
+    deleteImage(filename);
+    getUploadedImages();
+    $("#column-multiline").remove($(this).parents(".card"));
+  });
+  return false;
+}
   $("#classifybtn").click(function () {
     $("#classifybtn").attr("disabled", true);
     $("p.success").text("classifying...");
@@ -103,7 +155,6 @@ $(document).ready(function () {
             }
             $(this).remove();
             $(".tag").text("classified");
-            $("p.success").text("");
           }
         });
       },
@@ -176,31 +227,19 @@ $(document).ready(function () {
     </div>"
           );
         }
+        addClickToDelete();
         $('.loader-wrapper').removeClass('is-active');
       },
       error: function (data) {
-        $("p.error").text(
-          data.statusText + ":" + "Check logs for more info"
-        );
+       let error= data.statusText + ":" + "Check your BACKEND URL";
+        showNotification(error, "is-danger");
+        $('.loader-wrapper').removeClass('is-active');
       }
     });
-    
+    return false;
   }
 
-  function deleteImage(filename){
-    $.ajax({
-      type: "DELETE",
-      url: "/image?filename="+filename,
-      success: function (response) {
-        
-      },
-      error: function (data) {
-        $("p.error").text(
-          data.statusText + ":" + "Check logs for more info"
-        );
-      }
-    });
-  }
+  
   // Shows the preview of uploaded image
   function showUploadedImage(fileInput) {
     var uploadbtn = document.getElementById("uploadbtn");
