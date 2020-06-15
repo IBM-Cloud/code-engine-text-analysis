@@ -80,7 +80,7 @@ app.post("/classifyimage", function(req, res) {
     req.pipe(
       request.post(
         {
-          url: backendURL+"/results?prefix=results",
+          url: backendURL+"/results",
           agentOptions: {
             rejectUnauthorized: false
           }

@@ -116,7 +116,7 @@ function addClickToDelete(){
       type: "POST",
       url: "/classifyimage",
       success: function (response) {
-        //console.log(response.data);
+        console.log(response);
         var data = JSON.parse(response.data);
         //console.log(data);
         //var matched = $("#column-multiline footer").length;

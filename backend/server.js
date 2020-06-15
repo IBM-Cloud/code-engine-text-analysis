@@ -154,7 +154,7 @@ app.get("/items", function(req,res,next){
   var prefix = req.query.prefix;
   console.log(prefix);
   getBucketContents(req,res,next,prefix);
-  next();
+  //next();
 });
 /*
  * Upload an image for Image classification
@@ -164,10 +164,8 @@ app.post("/images", uploadFilesToCOS, function(req, res, next) {
 });
 
 app.post("/results", function(req, res, next) {
-  var prefix = req.query.prefix;
-  console.log(prefix);
-  getBucketContents(req,res,next,prefix);
-  next();
+  getBucketContents(req,res,next,"results");
+ // next();
 });
 
 app.delete("/item", function(req,res,next){
