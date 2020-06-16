@@ -11,9 +11,11 @@ spec:
       image: ibmcom/backend-job
       envFrom:
       - secretRef:
-         name: cos-secret
+         name: cos-job-secret
       - secretRef:
          name: vr-secret
+      - configMapRef:
+         name: backend-configuration
       resources:
         requests:
           memory: "128Mi"

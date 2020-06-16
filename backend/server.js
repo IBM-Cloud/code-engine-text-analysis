@@ -20,11 +20,9 @@ function getCosClient(){
   endpoint:
     process.env.COS_ENDPOINT ||
     "s3.us-south.cloud-object-storage.appdomain.cloud",
-  apiKeyId: process.env.COS_APIKEY,
+  apiKeyId: process.env.COS_SECRET_APIKEY,
   ibmAuthEndpoint: "https://iam.cloud.ibm.com/identity/token",
-  serviceInstanceId: process.env.COS_RESOURCE_INSTANCE_ID,
-  credentials: new myCOS.Credentials('c3d38fdb9e0948c6b9e3410a115e7a45', '56e147c24d6cc1d13afcba17a57418ab0bce52b4f3bb0ce6'),
-  signatureVersion: 'v4'
+  serviceInstanceId: process.env.COS_SECRET_RESOURCE_INSTANCE_ID,
 };
 
 var cosClient = new myCOS.S3(config);
