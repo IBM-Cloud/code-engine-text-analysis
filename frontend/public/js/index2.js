@@ -89,7 +89,7 @@ function deleteImage(filename){
     type: "DELETE",
     url: "/image?filename="+filename,
     success: function (response) {
-      showNotification(response.data,"is-primary");
+      showNotification("Image deleted!!!","is-primary");
     },
     error: function (data) {
       $("p.error").text(
@@ -108,61 +108,69 @@ function addClickToDelete(){
   });
   return false;
 }
+
+function toggleTable(){
+$(".table").hide();
+$('.table-toggle').on('click', function() {
+		$(this).parent().siblings(".table").toggle();
+		});
+}
+
+function readResults(){
+  $.ajax({
+    type: "POST",
+    url: "/classifyimage",
+    success: function (response) {
+      console.log(response);
+      var data = JSON.parse(response.data);
+      //console.log(data);
+      //var matched = $("#column-multiline footer").length;
+      $("p.card-footer-item").each(function (index) {
+        //console.log( index + ": " + $( this ).text() );
+        var id = $(this).attr("id");
+        //console.log(id);
+        var value = "results/" + id.toString() + ".json";
+        //console.log(value);
+        //console.log(data[value]);
+        var result = data[value].images[0].classifiers[0].classes.sort(
+          function (a, b) {
+            return b.score - a.score;
+          }
+        );
+        console.log(result);
+        let parent = $(this).parent(".card-footer");
+        if (result.length > 1) {
+             parent.append('<a href="#" class="card-footer-item table-toggle is-pulled-right"><span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>Show results</a><br>')
+             parent.after(
+              '<table class="table is-striped is-fullwidth"><tbody></tbody></table>');
+            toggleTable();
+
+          for (var i = 0; i < result.length; i++) {
+               $(".table")
+              .children("tbody")
+              .append(
+                "<tr><td>" +
+                  result[i].class +
+                  "</td><td>" +
+                  result[i].score +
+                  "</td></tr>"
+              );
+          }
+          parent.siblings().children(".card-content").children(".tag").text("Classified");
+          
+        }
+      });
+    },
+    error: function (data) {
+      $("p.error").text(data.statusText + ":" + "Check logs for more info");
+      $("#classifybtn").attr("disabled", true);
+    },
+  });
+}
   $("#classifybtn").click(function () {
     $("#classifybtn").attr("disabled", true);
-    $("p.success").text("classifying...");
     $(".tag").text("classifying...");
-    $.ajax({
-      type: "POST",
-      url: "/classifyimage",
-      success: function (response) {
-        console.log(response);
-        var data = JSON.parse(response.data);
-        //console.log(data);
-        //var matched = $("#column-multiline footer").length;
-        $("p.card-footer-item").each(function (index) {
-          //console.log( index + ": " + $( this ).text() );
-          var id = $(this).attr("id");
-          //console.log(id);
-          var value = "results/" + id.toString() + ".json";
-          //console.log(value);
-          //console.log(data[value]);
-          var result = data[value].images[0].classifiers[0].classes.sort(
-            function (a, b) {
-              return b.score - a.score;
-            }
-          );
-          console.log(result);
-          if (result.length > 1) {
-            $(this)
-              .parent(".card-footer")
-              .append(
-                '<table class="table is-striped is-fullwidth"><tbody></tbody></table>'
-              );
-
-            for (var i = 0; i < result.length; i++) {
-              $(this)
-                .parent(".card-footer")
-                .children(".table")
-                .children("tbody")
-                .append(
-                  "<tr><td>" +
-                    result[i].class +
-                    "</td><td>" +
-                    result[i].score +
-                    "</td></tr>"
-                );
-            }
-            $(this).remove();
-            $(".tag").text("classified");
-          }
-        });
-      },
-      error: function (data) {
-        $("p.error").text(data.statusText + ":" + "Check logs for more info");
-        $("#classifybtn").attr("disabled", true);
-      },
-    });
+    readResults();
   });
 
   // Check for click events on the navbar burger icon
@@ -174,6 +182,7 @@ function addClickToDelete(){
 
   function getUploadedImages(){
     console.log("I am called");
+    $('.loader-wrapper').addClass('is-active');
     $.ajax({
       type: "GET",
       url: "/items",
@@ -228,6 +237,7 @@ function addClickToDelete(){
           );
         }
         addClickToDelete();
+        readResults();
         $('.loader-wrapper').removeClass('is-active');
       },
       error: function (data) {
