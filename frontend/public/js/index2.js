@@ -131,7 +131,7 @@ function readResults(){
         //console.log(id);
         var value = "results/" + id.toString() + ".json";
         //console.log(value);
-        //console.log(data[value]);
+        if(data[value] !== undefined) {
         var result = data[value].images[0].classifiers[0].classes.sort(
           function (a, b) {
             return b.score - a.score;
@@ -140,7 +140,7 @@ function readResults(){
         console.log(result);
         let parent = $(this).parent(".card-footer");
         if (result.length > 1) {
-             parent.append('<a href="#" class="card-footer-item table-toggle is-pulled-right"><span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span>Show results</a><br>')
+             parent.append('<a href="#" class="card-footer-item table-toggle is-pulled-right">show results<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span></a><br>')
              parent.after(
               '<table class="table is-striped is-fullwidth"><tbody></tbody></table>');
             toggleTable();
@@ -157,7 +157,9 @@ function readResults(){
               );
           }
           parent.siblings().children(".card-content").children(".tag").text("Classified");
+          parent.siblings().children(".card-content").children("span").toggleClass("is-info");
           
+        }
         }
       });
     },
@@ -219,7 +221,7 @@ function readResults(){
                   Not classified\
                 </span><a href="#" id="' +
                 fileName +
-                '" class="is-pulled-right"><span class="icon"><i class="fas fa-trash"></i> </span></a> \
+                '" class="is-pulled-right"><span class="icon"><i class="fas fa-trash-alt"></i> </span></a> \
               </div>\
           </div>\
           <footer class="card-footer">\
