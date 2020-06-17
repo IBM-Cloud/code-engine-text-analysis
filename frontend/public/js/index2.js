@@ -110,10 +110,13 @@ function addClickToDelete(){
 }
 
 function toggleTable(){
-$(".table").hide();
-$('.table-toggle').on('click', function() {
-		$(this).parent().siblings(".table").toggle();
-		});
+  console.log("toggled!");
+	 $('.table-toggle').each(function (index){
+     $(this).on("click", function(){
+      	$(this).parent().siblings(".table").toggleClass('is-hidden');
+     });
+
+   });
 }
 
 function readResults(){
@@ -142,11 +145,10 @@ function readResults(){
         if (result.length > 1) {
              parent.append('<a href="#" class="card-footer-item table-toggle is-pulled-right">show results<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span></a><br>')
              parent.after(
-              '<table class="table is-striped is-fullwidth"><tbody></tbody></table>');
-            toggleTable();
+              '<table class="table is-striped is-fullwidth is-hidden"><tbody></tbody></table>');
 
           for (var i = 0; i < result.length; i++) {
-               $(".table")
+               parent.siblings(".table")
               .children("tbody")
               .append(
                 "<tr><td>" +
@@ -158,21 +160,23 @@ function readResults(){
           }
           parent.siblings().children(".card-content").children(".tag").text("Classified");
           parent.siblings().children(".card-content").children("span").toggleClass("is-info");
-          
+          $('.loader-wrapper').removeClass('is-active');
         }
         }
       });
+      toggleTable();
     },
     error: function (data) {
       $("p.error").text(data.statusText + ":" + "Check logs for more info");
       $("#classifybtn").attr("disabled", true);
+      $('.loader-wrapper').removeClass('is-active');
     },
   });
 }
   $("#classifybtn").click(function () {
     $("#classifybtn").attr("disabled", true);
     $(".tag").text("classifying...");
-    readResults();
+    getUploadedImages();
   });
 
   // Check for click events on the navbar burger icon
@@ -240,12 +244,10 @@ function readResults(){
         }
         addClickToDelete();
         readResults();
-        $('.loader-wrapper').removeClass('is-active');
       },
       error: function (data) {
        let error= data.statusText + ":" + "Check your BACKEND URL";
         showNotification(error, "is-danger");
-        $('.loader-wrapper').removeClass('is-active');
       }
     });
     return false;
