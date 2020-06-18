@@ -164,9 +164,12 @@ function readResults(){
           $('.loader-wrapper').removeClass('is-active');
         }
         }
+        else {
+           $('.loader-wrapper').removeClass('is-active');
+          return false;
+        }
       });
       toggleTable();
-      $('.loader-wrapper').removeClass('is-active');
     },
     error: function (data) {
       $("p.error").text(data.statusText + ":" + "Check logs for more info");
