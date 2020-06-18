@@ -48,13 +48,18 @@ var upload = multer({
     if (err) {
       next(err);
     }
-    if (req.files.length > 1) {
+    if (req.files.length === 0) {
       res.send(
-        "Successfully uploaded " + req.files.length + " files to Object Storage"
+        "Upload an image..."
       );
     }
-    else{
+    else if (req.files.length > 1){
     res.send(
+      "Successfully uploaded " + req.files.length + " files to Object Storage"
+    );
+    }
+    else {
+      res.send(
       "Successfully uploaded " + req.files.length + " file to Object Storage"
     );
     }

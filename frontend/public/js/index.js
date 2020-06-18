@@ -126,7 +126,7 @@ function readResults(){
     success: function (response) {
       console.log(response);
       var data = JSON.parse(response.data);
-      //console.log(data);
+      console.log(data);
       //var matched = $("#column-multiline footer").length;
       $("p.card-footer-item").each(function (index) {
         //console.log( index + ": " + $( this ).text() );
@@ -134,7 +134,8 @@ function readResults(){
         //console.log(id);
         var value = "results/" + id.toString() + ".json";
         //console.log(value);
-        if(data[value] !== undefined) {
+        console.log(Object.keys(data).length);
+        if (Object.keys(data).length !== 0 && data[value] !== undefined) {
         var result = data[value].images[0].classifiers[0].classes.sort(
           function (a, b) {
             return b.score - a.score;
@@ -165,6 +166,7 @@ function readResults(){
         }
       });
       toggleTable();
+      $('.loader-wrapper').removeClass('is-active');
     },
     error: function (data) {
       $("p.error").text(data.statusText + ":" + "Check logs for more info");
@@ -194,9 +196,19 @@ function readResults(){
       url: "/items",
       success: function (response) {
         $("#column-multiline").empty();
-        //console.log(response);
+        console.log(response);
+        if(response.data.includes("error") ) {
+          showNotification("An error occurred, check your backend.", "is-danger");
+          $('.loader-wrapper').removeClass('is-active');
+          return false;
+        }
         var data = JSON.parse(response.data);
         console.log(data);
+
+        if(Object.keys(data).length === 0) {
+          $('.loader-wrapper').removeClass('is-active');
+          return false;
+        }
         //var matched = $("#column-multiline footer").length;
         //var imageElem = document.createElement('img');
         // Just use the toString() method from your buffer instance
