@@ -31,6 +31,13 @@ button {
   margin-left:15px;
 }
 
+.card-footer-item {
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+}
+
 /*Loader*/
 .loader-wrapper {
   position: absolute;
