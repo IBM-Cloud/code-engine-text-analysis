@@ -24,7 +24,7 @@ app.get('/', function(req, res) {
 // if user is not logged-in redirect back to login page //
        res.sendFile(__dirname + "/public/501.html");
     }   else{
-        res.sendFile(__dirname + "/public/index2.html");
+        res.sendFile(__dirname + "/public/index.html");
     }
 });
 

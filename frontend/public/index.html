@@ -16,71 +16,33 @@
     ></script>
    
   </head>
-
   <body>
-    <section class="hero is-fullheight is-default is-bold">
+    <section class="hero is-fullheight is-bold">
       <div class="hero-head">
-        <nav class="navbar">
-          <div class="container">
-            <div class="navbar-brand">
-              <h1 class="navbar-item title">
-                Image Classification with Coligo
-              </h1>
-              <span class="navbar-burger burger" data-target="navbarMenu">
-                <span></span>
-                <span></span>
-                <span></span>
-              </span>
-            </div>
-            <div id="navbarMenu" class="navbar-menu">
-              <div class="navbar-end">
-                  <div class="navbar-item">
-                    <div class="field is-grouped">
-                      <p class="control">
-                        <a target="_blank" href="https://github.ibm.com/portfolio-solutions/coligo-image-classification">
-                          <span class="icon">
-                            <i class="fab fa-github"></i>
-                          </span>
-                          <span>
-                            Code
-                          </span>
-                        </a>
-                      </p>
-                    </div>
-                  </div>
-                  <div class="navbar-item">
-                    <div class="field is-grouped">
-                      <p class="control">
-                        <a target="_blank" href="https://cloud.ibm.com/docs/tutorials?topic=solution-tutorials-computer-vision-visual-insights-schematics">
-                        Tutorial
-                        </a>
-                      </p>
-                    </div>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </nav>
+    <nav class="navbar">
+      <div class="container">
+        <div class="nav-left">
+          <h1 class="navbar-item title">
+            Image Classification with Coligo
+          </h1>
+          <span class="navbar-burger burger" data-target="navbarMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </div>
       </div>
-      <div class="hero-body">
-        <div class="container has-text-centered">
-          <div class="columns is-vcentered">
-            <div class="column is-5 is-offset-1">
-              <h1 class="title is-2">
-                Image Classification
-              </h1>
-              <h2 class="subtitle is-4">
-                powered by Coligo and Visual Recognition
-              </h2>
-              <br />
-              <div class="field">
+    
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="field is-grouped">
                 <div
                   id="file-js-example"
-                  class="file is-centered is-boxed is-info"
+                  class="file is-info"
                 >
                   <label class="file-label">
                     <form
-                      action="/uploadimage"
+                    action="/uploadimage"
                       method="POST"
                       enctype="multipart/form-data"
                       id="imageForm"
@@ -93,46 +55,41 @@
                         accept="image/tiff, image/jpeg, image/png"
                         multiple
                       />
-                    </form>
-                    <span class="file-cta">
-                      <span class="file-icon">
-                        <i class="fas fa-upload"></i>
-                      </span>
-                      <span class="file-label">
-                        Choose an image...
-                      </span>
-                    </span>
-                  </label>
-                </div>
-              </div>
-              <div class="field">
-                <button
-                  class="button is-medium is-info is-outlined btn"
+                      <button
+                  class="button is-medium is-info is-outlined"
                   id="uploadbtn"
-                  disabled
                   type="submit"
                   form="imageForm"
-                >
-                  Upload Files
+                ><span class="file-icon">
+                  <i class="fas fa-upload"></i>
+                </span>
+                Upload image
                 </button>
-                <button
-                  class="button is-medium is-info is-outlined btn"
-                  id="classifybtn"
-                  disabled
-                >
-                  Classify
-                </button>
-                <div class="error">
-                  <p class="error has-text-danger is-medium"></p>
+                    </form>
+                  </label>
                 </div>
-                <div class="success">
-                  <p class="success has-text-info is-medium"></p>
-                </div>
-              </div>
+                <button id="classifybtn" class="button is-medium is-info is-outlined"><i class="fas fa-redo"></i></button>
+                
             </div>
-            <div class="column is-5 is-scrollable">
-              <h1>Image preview</h1>
-              <div id ="column-multiline" class="columns is-multiline">
+          </div>
+          </div>
+
+    </nav>
+      </div>
+        <div class='notifications'></div>
+      <div class="hero-body hero-body-padding-large">
+          <div class="loader-wrapper">
+            <div class="loader is-loading">
+            </div>
+         </div>
+        <div class="container has-text-centered">
+          <div class="columns is-vcentered">
+            <div class="column">
+             <!-- <fieldset class="fieldset">
+                <legend class="heading">IMAGES</legend>
+              
+              </fieldset>-->
+              <div id ="column-multiline" class="columns is-multiline"></div>
               </div>
             </div>
           </div>
@@ -144,6 +101,7 @@
           <div class="tabs is-centered">
             <ul>
               <li class="is-active"><a href="https://www.ibm.com/cloud" target="_blank">IBM Cloud</a></li>
+              <li class="is-active"><a href="https://www.ibm.com/cloud" target="_blank">Code</a></li>
             </ul>
           </div>
         </div>
