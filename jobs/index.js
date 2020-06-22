@@ -8,9 +8,9 @@ const VisualRecognitionV3 = require("ibm-watson/visual-recognition/v3");
 const { IamAuthenticator } = require("ibm-watson/auth");
 
 const visualRecognition = new VisualRecognitionV3({
-  url: process.env.VR_URL,
+  url: process.env.VR_JOB_SECRET_URL,
   version: process.env.VR_VERSION || '2018-03-19',
-  authenticator: new IamAuthenticator({ apikey: process.env.VR_APIKEY }),
+  authenticator: new IamAuthenticator({ apikey: process.env.VR_JOB_SECRET_APIKEY }),
 });
 
 var config = {
