@@ -1,7 +1,7 @@
 {
-  "name": "coligo-object-detection",
+  "name": "codeengine-image-classification",
   "version": "1.0.0",
-  "description": "Image Classification with Coligo and Watson Visual Recognition",
+  "description": "Image Classification with Code Engine and Watson Visual Recognition",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -7,7 +7,7 @@ spec:
   retryLimit: 2
   jobDefinitionSpec:
     containers:
-    - name: coligo-jobs
+    - name: codeengine-jobs
       image: ibmcom/backend-job
       envFrom:
       - secretRef:
