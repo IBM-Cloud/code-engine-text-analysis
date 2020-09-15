@@ -25,6 +25,7 @@ function getCosClient(){
   serviceInstanceId: process.env.COS_SECRET_RESOURCE_INSTANCE_ID,
 };
 
+console.log(process.env);
 var cosClient = new myCOS.S3(config);
 return cosClient;
 }
