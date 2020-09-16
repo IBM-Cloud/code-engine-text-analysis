@@ -1,9 +1,9 @@
 $(document).ready(function () {
   $('.loader-wrapper').addClass('is-active');
   getUploadedImages();
-  $("p.error").text("");
-  $("p.success").text("");
-  
+  //$("p.error").text("");
+  //$("p.success").text("");
+  $("#classifybtn").attr("disabled", true);
   $("#uploadbtn").click(function(e){
     $("#file").click();
     e.preventDefault();
@@ -13,21 +13,23 @@ $(document).ready(function () {
    // showUploadedImage(this);
     //$("#uploadbtn").removeAttr("disabled");
     $("#uploadbtn").submit();
-    console.log("i am here");
+    // console.log("i am here");
   });
   
   $("#imageForm").submit(function () {
-    console.log("i am submitted");
+    // console.log("i am submitted");
     $("#uploadbtn").addClass("is-loading");
     $("#table tbody tr").remove();
     $(this).ajaxSubmit({
       error: function (data) {
-        showNotification(data.statusText + ":" + "Check your BACKEND URL","is-danger");
+        showNotification(data.statusText + ":" + "Check your BACKEND connection to cloud services","is-danger");
+        console.log(data);
         $("#uploadbtn").removeClass("is-loading");
+        $('.loader-wrapper').removeClass('is-active');
       },
       success: function (response) {
-        console.log("i am here too");
-        console.log(response.data);
+        // console.log("i am here too");
+        // console.log(response.data);
         //$("p.success").text(response.data);
         showNotification(response.data,"is-primary");
         $("#uploadbtn").removeClass("is-loading");
@@ -43,13 +45,13 @@ $(document).ready(function () {
 ***************************************/
 function showNotification(data,cssclass)
 {
-  notify(data, cssclass, 5000);
+  $('.notifications').empty();
+  notify(data, cssclass, 7000);
   $(".notification").text(data);
   $(".notification").addClass(cssclass);
   $(".notification").removeClass("is-hidden");
-  //$(".notification").append('<button class="delete" type="button">Close</button>');
+  $(".notification").append('<button class="delete" type="button">Close</button>');
 }
-
   $(".notification").addClass('is-hidden');
   $(document).on('click', '.notification > button.delete', function() {
     $(this).parent().addClass('is-hidden');
@@ -85,22 +87,21 @@ function notify(msg, mode, duration) {
 
 /* DELETE functionality*/
 function deleteImage(filename){
+  $("#classifybtn").attr("disabled", true);
   $.ajax({
     type: "DELETE",
     url: "/image?filename="+filename,
     success: function (response) {
-      showNotification("Image deleted!!!","is-primary");
+      showNotification("Image deleted successfully...","is-primary");
     },
     error: function (data) {
-      $("p.error").text(
-        data.statusText + ":" + "Check logs for more info"
-      );
+     console.log(data);
     }
   });
 }
 function addClickToDelete(){
   $(".card-content").on("click","a", function (){
-    console.log("Clicked!!")
+    // console.log("Clicked!!")
     var filename=$(this).attr("id");
     deleteImage(filename);
     getUploadedImages();
@@ -110,7 +111,7 @@ function addClickToDelete(){
 }
 
 function toggleTable(){
-  console.log("toggled!");
+  // console.log("toggled!");
 	 $('.table-toggle').each(function (index){
      $(this).on("click", function(){
       	$(this).parent().siblings(".table").toggleClass('is-hidden');
@@ -124,9 +125,10 @@ function readResults(){
     type: "POST",
     url: "/classifyimage",
     success: function (response) {
-      console.log(response);
+      $("#classifybtn").removeAttr("disabled");
+      //console.log(response);
       var data = JSON.parse(response.data);
-      console.log(data);
+      //console.log(data);
       //var matched = $("#column-multiline footer").length;
       $("p.card-footer-item").each(function (index) {
         //console.log( index + ": " + $( this ).text() );
@@ -134,7 +136,7 @@ function readResults(){
         //console.log(id);
         var value = "results/" + id.toString() + ".json";
         //console.log(value);
-        console.log(Object.keys(data).length);
+        // console.log(Object.keys(data).length);
         if (Object.keys(data).length !== 0 && data[value] !== undefined) {
         var result = data[value].images[0].classifiers[0].classes.sort(
           function (a, b) {
@@ -172,7 +174,8 @@ function readResults(){
       toggleTable();
     },
     error: function (data) {
-      $("p.error").text(data.statusText + ":" + "Check logs for more info");
+      //$("p.error").text(data.statusText + ":" + "Check logs for more info");
+      console.log(data);
       $("#classifybtn").attr("disabled", true);
       $('.loader-wrapper').removeClass('is-active');
     },
@@ -192,23 +195,25 @@ function readResults(){
   });
 
   function getUploadedImages(){
-    console.log("I am called");
+    // console.log("I am called");
     $('.loader-wrapper').addClass('is-active');
     $.ajax({
       type: "GET",
       url: "/items",
       success: function (response) {
         $("#column-multiline").empty();
-        console.log(response);
+        //console.log(response);
         if(response.data.includes("error") ) {
-          showNotification("An error occurred, check your backend.", "is-danger");
+          showNotification("An error occurred, check your backend connection to cloud services", "is-danger");
+          $("#classifybtn").attr("disabled", true);
           $('.loader-wrapper').removeClass('is-active');
           return false;
         }
         var data = JSON.parse(response.data);
-        console.log(data);
+        //console.log(data);
 
         if(Object.keys(data).length === 0) {
+          showNotification("Upload an image...", "is-info");
           $('.loader-wrapper').removeClass('is-active');
           return false;
         }
@@ -217,10 +222,10 @@ function readResults(){
         // Just use the toString() method from your buffer instance
         // to get date as base64 type
         //imageElem.src = 'data:image/jpeg;base64,' + buf.toString('base64');
-        console.log(Object.keys(data).length);
+        //console.log(Object.keys(data).length);
         for (var i = 0; i < Object.keys(data).length; i++) {
           var buffer = Object.values(data)[i];
-          console.log(buffer);
+          //console.log(buffer);
           let fileName = Object.keys(data)[i].split("/")[1];
           $("#column-multiline").append(
             '<div class="column is-one-quarter-desktop is-half-tablet">\
@@ -261,8 +266,11 @@ function readResults(){
         readResults();
       },
       error: function (data) {
-       let error= data.statusText + ":" + "Check your BACKEND URL";
+       let error= data.statusText + ":" + "An error occurred while uploading, check your backend logs.";
+         console.log(data);
         showNotification(error, "is-danger");
+        $("#classifybtn").attr("disabled", true);
+       $('.loader-wrapper').removeClass('is-active');
       }
     });
     return false;
