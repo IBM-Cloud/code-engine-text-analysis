@@ -23,7 +23,12 @@ var config = {
 };
 
 var cosClient = new myCOS.S3(config);
-getBucketContents(process.env.COS_BUCKETNAME);
+/**
+ * Get contents of a COS Bucket
+ *
+ * @param {*} bucketName
+ * @return {*} 
+ */
 function getBucketContents(bucketName) {
   console.log(`Retrieving bucket contents from: ${bucketName}`);
   return cosClient
@@ -43,7 +48,13 @@ function getBucketContents(bucketName) {
       console.error(`ERROR: ${e.code} - ${e.message}\n`);
     });
 }
-
+/**
+ * Get an Item from a COS Bucket
+ *
+ * @param {*} bucketName
+ * @param {*} itemName
+ * @return {*} 
+ */
 function getItem(bucketName, itemName) {
   console.log(`Retrieving item from bucket: ${bucketName}, key: ${itemName}`);
   return cosClient
@@ -75,7 +86,14 @@ function getItem(bucketName, itemName) {
       console.error(`ERROR: ${e.code} - ${e.message}\n`);
     });
 }
-
+/**
+ * Create a JSON file from the Visual Recognition results
+ *
+ * @param {*} bucketName
+ * @param {*} itemName
+ * @param {*} fileText
+ * @return {*} 
+ */
 function createJsonFile(bucketName, itemName, fileText) {
     console.log(`Creating new item: ${itemName}`);
     return cosClient.putObject({

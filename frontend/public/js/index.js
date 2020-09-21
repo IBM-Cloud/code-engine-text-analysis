@@ -1,19 +1,13 @@
 $(document).ready(function () {
   $('.loader-wrapper').addClass('is-active');
   getUploadedImages();
-  //$("p.error").text("");
-  //$("p.success").text("");
   $("#classifybtn").attr("disabled", true);
   $("#uploadbtn").click(function(e){
     $("#file").click();
     e.preventDefault();
   });
   $("#file").change(function () {
-    //$("#column-multiline").empty();
-   // showUploadedImage(this);
-    //$("#uploadbtn").removeAttr("disabled");
     $("#uploadbtn").submit();
-    // console.log("i am here");
   });
   
   $("#imageForm").submit(function () {
@@ -40,9 +34,12 @@ $(document).ready(function () {
     return false;
   });
 
-/***************************************
-*********NOTIFICATIONS****************
-***************************************/
+/**
+ * Show notification - error, success, info
+ *
+ * @param {*} data
+ * @param {*} cssclass
+ */
 function showNotification(data,cssclass)
 {
   $('.notifications').empty();
@@ -57,7 +54,12 @@ function showNotification(data,cssclass)
     $(this).parent().addClass('is-hidden');
     return false;
 });
-
+/**
+ * Generate a unique identifier for each notification
+ *
+ * @param {*} len
+ * @return {*} 
+ */
 function stringGen(len) {
   var text = "";
   var charset = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -65,7 +67,13 @@ function stringGen(len) {
     text += charset.charAt(Math.floor(Math.random() * charset.length));
   return text;
 }
-
+/**
+ * Send a notification to the UI with Unique ID
+ *
+ * @param {*} msg
+ * @param {*} mode
+ * @param {*} duration
+ */
 function notify(msg, mode, duration) {
   var classy = stringGen(9);
   $('.notifications').append(`<div id='${classy}' class='notification ${mode} slideInRight'>${msg}</div>`)
@@ -85,7 +93,11 @@ function notify(msg, mode, duration) {
   }, duration);
 }
 
-/* DELETE functionality*/
+/**
+ * Delete an image 
+ *
+ * @param {*} filename
+ */
 function deleteImage(filename){
   $("#classifybtn").attr("disabled", true);
   $.ajax({
@@ -109,7 +121,10 @@ function addClickToDelete(){
   });
   return false;
 }
-
+/**
+ * Toggle the results table
+ *
+ */
 function toggleTable(){
   // console.log("toggled!");
 	 $('.table-toggle').each(function (index){
@@ -119,7 +134,11 @@ function toggleTable(){
 
    });
 }
-
+/**
+ * Read the results from the COS Bucket
+ * JSON output post Job run
+ *
+ */
 function readResults(){
   $.ajax({
     type: "POST",
@@ -193,8 +212,12 @@ function readResults(){
     $(".navbar-burger").toggleClass("is-active");
     $(".navbar-menu").toggleClass("is-active");
   });
-
-  function getUploadedImages(){
+/**
+ * Get the Uploaded Images from the COS Bucket
+ *
+ * @return {*} 
+ */
+function getUploadedImages(){
     // console.log("I am called");
     $('.loader-wrapper').addClass('is-active');
     $.ajax({
@@ -217,12 +240,6 @@ function readResults(){
           $('.loader-wrapper').removeClass('is-active');
           return false;
         }
-        //var matched = $("#column-multiline footer").length;
-        //var imageElem = document.createElement('img');
-        // Just use the toString() method from your buffer instance
-        // to get date as base64 type
-        //imageElem.src = 'data:image/jpeg;base64,' + buf.toString('base64');
-        //console.log(Object.keys(data).length);
         for (var i = 0; i < Object.keys(data).length; i++) {
           var buffer = Object.values(data)[i];
           //console.log(buffer);
@@ -274,60 +291,5 @@ function readResults(){
       }
     });
     return false;
-  }
-
-  
-  // Shows the preview of uploaded image
-  function showUploadedImage(fileInput) {
-    var uploadbtn = document.getElementById("uploadbtn");
-    var files = fileInput.files;
-    if (files.length > 0) {
-      for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        var imageType = /image.*/;
-        if (!file.type.match(imageType)) {
-          continue;
-        }
-        $("#column-multiline").append(
-          '<div class="column is-one-half-desktop is-half-tablet">\
-                  <div class="card">\
-                      <div class="card-image">\
-                          <figure class="image is-3by2">\
-                            <img id="' +
-            file.name +
-            i +
-            '" src="https://unsplash.it/300/200/?random&pic=1" alt="placeholder">\
-                          </figure>\
-                          <div class="card-content is-overlay">\
-                            <span class="tag is-info is-pulled-right">\
-                              Not classified\
-                            </span>\
-                          </div>\
-                      </div>\
-                      <footer class="card-footer">\
-                          <p id="' +
-            file.name +
-            '"class="card-footer-item">\
-                            ' +
-            file.name +
-            "\
-                          </p>\
-                      </footer>\
-                  </div>\
-                </div>"
-        );
-        //const fileName = document.querySelector("#file-js-example .file-name");
-        //files[i].name = 'image_'+i-1+file.type;
-        var img = document.getElementById(file.name + i);
-        img.file = file;
-        var reader = new FileReader();
-        reader.onload = (function (aImg) {
-          return function (e) {
-            aImg.src = e.target.result;
-          };
-        })(img);
-        reader.readAsDataURL(file);
-      }
-    }
   }
 });

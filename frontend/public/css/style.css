@@ -71,7 +71,7 @@ button {
 .notifications {
   position: fixed;
   z-index: 9999;
-  top: 25px;
+  top: 75px;
   right: 15px;
   width: auto;
 }

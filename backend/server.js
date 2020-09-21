@@ -13,7 +13,11 @@ const cors = require("cors");
 app.use(cors());
 
 const port = process.env.PORT || 3001;
-
+/**
+ *Define Cloud OBject Storage client configuration
+ *
+ * @return {*} cosCLient
+ */
 function getCosClient() {
   var config = {
     endpoint:
@@ -29,7 +33,13 @@ function getCosClient() {
   return cosClient;
 }
 
-// To upload files to Cloud Object Storage
+/**
+ * Upload images to COS Bucket
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 function uploadFilesToCOS(req, res, next) {
   var upload = multer({
     storage: multerS3({
@@ -61,7 +71,15 @@ function uploadFilesToCOS(req, res, next) {
     }
   });
 }
-
+/**
+ *Get COS bucket contents (images)
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @param {*} prefix
+ * @return {*} result dictionaru
+ */
 async function getBucketContents(req, res, next, prefix) {
   try {
     let cos = getCosClient();
@@ -91,7 +109,14 @@ async function getBucketContents(req, res, next, prefix) {
     return next(e.message);
   }
 }
-
+/**
+ * Get each item in a COS Bucket
+ *
+ * @param {*} bucketName
+ * @param {*} itemName
+ * @param {*} prefix
+ * @return {*} 
+ */
 async function getItem(bucketName, itemName, prefix) {
   let cos = getCosClient();
   console.log(`Retrieving item from bucket: ${bucketName}, key: ${itemName}`);
@@ -106,13 +131,7 @@ async function getItem(bucketName, itemName, prefix) {
       if (prefix === "results") {
         return JSON.parse(data.Body);
       } else {
-        /*var params = {Bucket: bucketName, Key: itemName};
-var promise = cos.getSignedUrlPromise('getObject', params);
-promise.then(function(url) {
-  console.log('The URL is', url);
-}).catch (function(err) {
-  console.log('error: ', err);
-});*/
+       
         return Buffer.from(data.Body).toString("base64");
       }
     }
@@ -165,6 +184,9 @@ app.get("/items", async (req, res, next) => {
  */
 app.post("/images", uploadFilesToCOS, function (req, res, next) {});
 
+/**
+* Get the JSON from the results folder of COS Bucket
+ */
 app.post("/results", async (req, res, next) => {
   try {
     getBucketContents(req, res, next, "results");
@@ -175,6 +197,9 @@ app.post("/results", async (req, res, next) => {
   }
 });
 
+/**
+* Delete an item from the COS Bucket
+ */
 app.delete("/item", function (req, res, next) {
   var itemName = req.query.filename;
   console.log(itemName);
@@ -182,11 +207,15 @@ app.delete("/item", function (req, res, next) {
   deleteItem(req, res, next, null, itemName, "results");
 });
 
+/**
+* Middleware to handle not supported routes
+ */
 app.use((req, res, next) => {
   const error = new Error("Not found");
   error.status = 404;
   next(error);
 });
+
 // error handler middleware
 app.use((error, req, res, next) => {
   console.log(error);
