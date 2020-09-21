@@ -130,8 +130,7 @@ async function getItem(bucketName, itemName, prefix) {
     if (data != null) {
       if (prefix === "results") {
         return JSON.parse(data.Body);
-      } else {
-       
+      } else {  
         return Buffer.from(data.Body).toString("base64");
       }
     }

@@ -23,6 +23,7 @@ var config = {
 };
 
 var cosClient = new myCOS.S3(config);
+getBucketContents(process.env.COS_BUCKETNAME);
 /**
  * Get contents of a COS Bucket
  *
@@ -72,7 +73,7 @@ function getItem(bucketName, itemName) {
         visualRecognition
           .classify(params)
           .then((response) => {
-            //console.log(JSON.stringify(response.result, null, 2));
+            console.log(JSON.stringify(response.result, null, 2));
             createJsonFile(bucketName+'/results',itemName.split('/')[1]+'.json',JSON.stringify(response.result, null, 2));
           })
           .catch((err) => {

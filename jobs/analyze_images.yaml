@@ -1,22 +1,21 @@
-apiVersion: coligo.cloud.ibm.com/v1alpha1
+apiVersion: codeengine.cloud.ibm.com/v1beta1
 kind: JobRun
 metadata:
   generateName: classify-images-
 spec:
-  arraySize: 1
-  retryLimit: 2
   jobDefinitionSpec:
-    containers:
-    - name: codeengine-jobs
-      image: ibmcom/backend-job
-      envFrom:
-      - secretRef:
-         name: cos-job-secret
-      - secretRef:
-         name: vr-secret
-      - configMapRef:
-         name: backend-configuration
-      resources:
-        requests:
-          memory: "128Mi"
-          cpu: "1"
+    arraySpec: "1"
+    retryLimit: 2
+    template:
+      containers:
+      - name: codeengine-jobs
+        image: ibmcom/backend-job
+        envFrom:
+        - secretRef:
+            name: backend-job-job-binding-request
+        - configMapRef:
+            name: backend-configuration
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "1"
