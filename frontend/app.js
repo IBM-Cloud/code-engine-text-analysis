@@ -28,9 +28,9 @@ app.get('/', function(req, res) {
     }
 });
 
-app.get('/items', function(req, res){
+app.get('/items', async(req, res) => {
   req.pipe(
-    request.get(
+   await request.get(
       {
         url: backendURL+"/items?prefix=images",
         agentOptions: {
@@ -52,9 +52,9 @@ app.get('/items', function(req, res){
 /*
  * Upload an image for Image classification
  */
-app.post("/uploadimage", function(req, res) {
+app.post("/uploadimage", async(req, res) => {
     req.pipe(
-      request.post(
+     await request.post(
         {
           url: backendURL+"/images",
           gzip: true,
@@ -76,9 +76,9 @@ app.post("/uploadimage", function(req, res) {
   
 });
 
-app.post("/classifyimage", function(req, res) {
-    req.pipe(
-      request.post(
+app.post("/classifyimage", async(req, res) => {
+     req.pipe(
+       await request.post(
         {
           url: backendURL+"/results",
           agentOptions: {
@@ -99,10 +99,10 @@ app.post("/classifyimage", function(req, res) {
   
 });
 
-app.delete("/image", function(req, res) {
+app.delete("/image", async (req, res) => {
   var itemName = req.query.filename;
   req.pipe(
-    request.delete(
+    await request.delete(
       {
         url: backendURL+"/item?filename="+itemName,
         agentOptions: {

@@ -189,7 +189,7 @@ app.post("/images", uploadFilesToCOS, function (req, res, next) {});
  */
 app.post("/results", async (req, res, next) => {
   try {
-    getBucketContents(req, res, next, "results");
+    await getBucketContents(req, res, next, "results");
   } catch (error) {
     // Passes errors into the error handler
     console.log(error);
@@ -200,11 +200,11 @@ app.post("/results", async (req, res, next) => {
 /**
 * Delete an item from the COS Bucket
  */
-app.delete("/item", function (req, res, next) {
+app.delete("/item", async (req, res, next) => {
   var itemName = req.query.filename;
   console.log(itemName);
-  deleteItem(req, res, next, null, itemName, "images");
-  deleteItem(req, res, next, null, itemName, "results");
+  await deleteItem(req, res, next, null, itemName, "images");
+  await deleteItem(req, res, next, null, itemName, "results");
 });
 
 /**
