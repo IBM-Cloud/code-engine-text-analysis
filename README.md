@@ -6,6 +6,8 @@ Following the steps in the [solution tutorial](https://cloud.ibm.com/docs/soluti
 
 You will create a Code Engine project, select the project and deploy Code Engine components - applications and jobs to the project. You will learn how to bind IBM Cloud services (Cloud Object Storage and Visual Recognition) to your Code Engine components. You will also understand the auto-scaling capability of Code Engine where instances are scaled up or down (to zero) based on incoming workload.
 
+IBM Cloud™ Code Engine is a fully managed, serverless platform that runs your containerized workloads, including web apps, micro-services, event-driven functions, or batch jobs. Code Engine even builds container images for you from your source code. Because these workloads are all hosted within the same Kubernetes infrastructure, all of them can seamlessly work together. The Code Engine experience is designed so that you can focus on writing code and not on the infrastructure that is needed to host it.
+
 ## Architecture
 
 ![](images/architecture_diagram.png)
