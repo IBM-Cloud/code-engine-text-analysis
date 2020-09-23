@@ -64,6 +64,7 @@ app.post("/uploadimage", async(req, res) => {
         },
         function(error, resp, body) {
           if (error) {
+            console.log(error);
             res.status(400).send(error.message);
           }
           else{
@@ -87,6 +88,7 @@ app.post("/classifyimage", async(req, res) => {
         },
         function(error, resp, body) {
           if (error) {
+            console.log(error);
             res.status(400).send(error.message);
           }
           else{
@@ -111,6 +113,7 @@ app.delete("/image", async (req, res) => {
       },
       function(error, resp, body) {
         if (error) {
+          console.log(error);
           res.status(400).send(error.message);
         }
         else{

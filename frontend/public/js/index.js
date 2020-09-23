@@ -11,7 +11,7 @@ $(document).ready(function () {
   });
   
   $("#imageForm").submit(function () {
-    // console.log("i am submitted");
+    // // console.log("i am submitted");
     $("#uploadbtn").addClass("is-loading");
     $("#table tbody tr").remove();
     $(this).ajaxSubmit({
@@ -22,7 +22,7 @@ $(document).ready(function () {
         $('.loader-wrapper').removeClass('is-active');
       },
       success: function (response) {
-        // console.log("i am here too");
+        // // console.log("i am here too");
         // console.log(response.data);
         //$("p.success").text(response.data);
         showNotification(response.data,"is-primary");
@@ -113,7 +113,6 @@ function deleteImage(filename){
 }
 function addClickToDelete(){
   $(".card-content").on("click","a", function (){
-    // console.log("Clicked!!")
     var filename=$(this).attr("id");
     deleteImage(filename);
     getUploadedImages();
@@ -126,7 +125,6 @@ function addClickToDelete(){
  *
  */
 function toggleTable(){
-  // console.log("toggled!");
 	 $('.table-toggle').each(function (index){
      $(this).on("click", function(){
       	$(this).parent().siblings(".table").toggleClass('is-hidden');
@@ -148,24 +146,23 @@ function readResults(){
       //console.log(response);
       var data = JSON.parse(response.data);
       //console.log(data);
-      //var matched = $("#column-multiline footer").length;
       $("p.card-footer-item").each(function (index) {
-        //console.log( index + ": " + $( this ).text() );
+        console.log( index + ": " + $( this ).text() );
         var id = $(this).attr("id");
         //console.log(id);
         var value = "results/" + id.toString() + ".json";
         //console.log(value);
-        // console.log(Object.keys(data).length);
-        if (Object.keys(data).length !== 0 && data[value] !== undefined) {
+        //console.log(Object.keys(data).length);
+        if (Object.keys(data).length !== 0 && data.hasOwnProperty(value)) {
         var result = data[value].images[0].classifiers[0].classes.sort(
           function (a, b) {
             return b.score - a.score;
           }
         );
-        console.log(result);
+        //console.log(result);
         let parent = $(this).parent(".card-footer");
         if (result.length > 1) {
-             parent.append('<a href="#" class="card-footer-item table-toggle is-pulled-right">show results<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span></a><br>')
+             parent.append('<a class="card-footer-item table-toggle is-pulled-right">show results<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span></a><br>')
              parent.after(
               '<table class="table is-striped is-fullwidth is-hidden"><tbody></tbody></table>');
 
@@ -187,7 +184,6 @@ function readResults(){
         }
         else {
            $('.loader-wrapper').removeClass('is-active');
-          return false;
         }
       });
       toggleTable();
@@ -218,7 +214,7 @@ function readResults(){
  * @return {*} 
  */
 function getUploadedImages(){
-    // console.log("I am called");
+    // // console.log("I am called");
     $('.loader-wrapper').addClass('is-active');
     $.ajax({
       type: "GET",
@@ -260,7 +256,7 @@ function getUploadedImages(){
               <div class="card-content is-overlay">\
                 <span class="tag is-info is-pulled-left">\
                   Not classified\
-                </span><a href="#" id="' +
+                </span><a id="' +
                 fileName +
                 '" class="is-pulled-right"><span class="icon"><i class="fas fa-trash-alt"></i> </span></a> \
               </div>\

@@ -28,7 +28,7 @@ function getCosClient() {
     serviceInstanceId: process.env.COS_SECRET_RESOURCE_INSTANCE_ID,
   };
 
-  console.log(process.env);
+  //console.log(process.env);
   var cosClient = new myCOS.S3(config);
   return cosClient;
 }
@@ -78,7 +78,7 @@ function uploadFilesToCOS(req, res, next) {
  * @param {*} res
  * @param {*} next
  * @param {*} prefix
- * @return {*} result dictionaru
+ * @return {*} result dictionary
  */
 async function getBucketContents(req, res, next, prefix) {
   try {
@@ -172,7 +172,7 @@ app.get("/items", async (req, res, next) => {
   try {
     var prefix = req.query.prefix;
     // console.log(prefix);
-    getBucketContents(req, res, next, prefix);
+    await getBucketContents(req, res, next, prefix);
   } catch (error) {
     // Passes errors into the error handler
     return next(error);
