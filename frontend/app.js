@@ -27,12 +27,34 @@ app.get('/', function(req, res) {
         res.sendFile(__dirname + "/public/index.html");
     }
 });
+
+app.get('/items', async(req, res) => {
+  req.pipe(
+   await request.get(
+      {
+        url: backendURL+"/items?prefix=images",
+        agentOptions: {
+          rejectUnauthorized: false
+        }
+      },
+      function(error, resp, body) {
+        if (error) {
+          res.status(400).send(error.message);
+        }
+        else{
+        //console.log(body);
+        res.send({ data: body });
+        }
+      }
+    )
+  );
+});
 /*
  * Upload an image for Image classification
  */
-app.post("/uploadimage", function(req, res) {
+app.post("/uploadimage", async(req, res) => {
     req.pipe(
-      request.post(
+     await request.post(
         {
           url: backendURL+"/images",
           gzip: true,
@@ -42,6 +64,7 @@ app.post("/uploadimage", function(req, res) {
         },
         function(error, resp, body) {
           if (error) {
+            console.log(error);
             res.status(400).send(error.message);
           }
           else{
@@ -54,9 +77,9 @@ app.post("/uploadimage", function(req, res) {
   
 });
 
-app.post("/classifyimage", function(req, res) {
-    req.pipe(
-      request.post(
+app.post("/classifyimage", async(req, res) => {
+     req.pipe(
+       await request.post(
         {
           url: backendURL+"/results",
           agentOptions: {
@@ -65,6 +88,7 @@ app.post("/classifyimage", function(req, res) {
         },
         function(error, resp, body) {
           if (error) {
+            console.log(error);
             res.status(400).send(error.message);
           }
           else{
@@ -75,6 +99,31 @@ app.post("/classifyimage", function(req, res) {
       )
     );
   
+});
+
+app.delete("/image", async (req, res) => {
+  var itemName = req.query.filename;
+  req.pipe(
+    await request.delete(
+      {
+        url: backendURL+"/item?filename="+itemName,
+        agentOptions: {
+          rejectUnauthorized: false
+        }
+      },
+      function(error, resp, body) {
+        if (error) {
+          console.log(error);
+          res.status(400).send(error.message);
+        }
+        else{
+        //console.log(body);
+        res.send({ data: body });
+        }
+      }
+    )
+  );
+
 });
 
 

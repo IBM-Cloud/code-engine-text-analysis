@@ -8,9 +8,9 @@ const VisualRecognitionV3 = require("ibm-watson/visual-recognition/v3");
 const { IamAuthenticator } = require("ibm-watson/auth");
 
 const visualRecognition = new VisualRecognitionV3({
-  url: process.env.VR_URL,
+  url: process.env.VR_JOB_SECRET_URL,
   version: process.env.VR_VERSION || '2018-03-19',
-  authenticator: new IamAuthenticator({ apikey: process.env.VR_APIKEY }),
+  authenticator: new IamAuthenticator({ apikey: process.env.VR_JOB_SECRET_APIKEY }),
 });
 
 var config = {
@@ -24,6 +24,12 @@ var config = {
 
 var cosClient = new myCOS.S3(config);
 getBucketContents(process.env.COS_BUCKETNAME);
+/**
+ * Get contents of a COS Bucket
+ *
+ * @param {*} bucketName
+ * @return {*} 
+ */
 function getBucketContents(bucketName) {
   console.log(`Retrieving bucket contents from: ${bucketName}`);
   return cosClient
@@ -43,7 +49,13 @@ function getBucketContents(bucketName) {
       console.error(`ERROR: ${e.code} - ${e.message}\n`);
     });
 }
-
+/**
+ * Get an Item from a COS Bucket
+ *
+ * @param {*} bucketName
+ * @param {*} itemName
+ * @return {*} 
+ */
 function getItem(bucketName, itemName) {
   console.log(`Retrieving item from bucket: ${bucketName}, key: ${itemName}`);
   return cosClient
@@ -61,7 +73,7 @@ function getItem(bucketName, itemName) {
         visualRecognition
           .classify(params)
           .then((response) => {
-            //console.log(JSON.stringify(response.result, null, 2));
+            console.log(JSON.stringify(response.result, null, 2));
             createJsonFile(bucketName+'/results',itemName.split('/')[1]+'.json',JSON.stringify(response.result, null, 2));
           })
           .catch((err) => {
@@ -75,7 +87,14 @@ function getItem(bucketName, itemName) {
       console.error(`ERROR: ${e.code} - ${e.message}\n`);
     });
 }
-
+/**
+ * Create a JSON file from the Visual Recognition results
+ *
+ * @param {*} bucketName
+ * @param {*} itemName
+ * @param {*} fileText
+ * @return {*} 
+ */
 function createJsonFile(bucketName, itemName, fileText) {
     console.log(`Creating new item: ${itemName}`);
     return cosClient.putObject({

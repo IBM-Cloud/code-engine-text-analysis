@@ -1,4 +1,4 @@
-# Image Classification with Coligo and Visual Recognition
+# Image Classification with Code Engine and Visual Recognition
 
 :warning: WORK IN PROGRESS
 
