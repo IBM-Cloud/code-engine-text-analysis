@@ -120,6 +120,17 @@ function addClickToDelete(){
   });
   return false;
 }
+
+function showJSON(value){
+  $('.div-toggle').each(function (index){
+     $(this).on("click", function(){
+        $(this).parent().siblings(".code-editor").text(value);
+        $(this).parent().siblings(".code-editor").toggleClass('is-hidden');
+     });
+
+   });
+}
+
 /**
  * Toggle the results table
  *
@@ -145,6 +156,7 @@ function readResults(){
       $("#classifybtn").removeAttr("disabled");
       //console.log(response);
       var data = JSON.parse(response.data);
+      var jsonValue = ""; 
       //console.log(data);
       $("p.card-footer-item").each(function (index) {
         console.log( index + ": " + $( this ).text() );
@@ -154,31 +166,30 @@ function readResults(){
         //console.log(value);
         //console.log(Object.keys(data).length);
         if (Object.keys(data).length !== 0 && data.hasOwnProperty(value)) {
-        var result = data[value].images[0].classifiers[0].classes.sort(
-          function (a, b) {
-            return b.score - a.score;
-          }
-        );
-        //console.log(result);
+        var result = data[value].keywords;
+        jsonValue = data[value];
+        console.log(result);
         let parent = $(this).parent(".card-footer");
         if (result.length > 1) {
-             parent.append('<a class="card-footer-item table-toggle is-pulled-right">show results<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span></a><br>')
+             parent.append('<a class="card-footer-item table-toggle">Keywords<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span></a><br>')
+             parent.append('<a class="card-footer-item div-toggle is-pulled-right">JSON&lt;\/&gt;</a><br>')
              parent.after(
-              '<table class="table is-striped is-fullwidth is-hidden"><tbody></tbody></table>');
-
+              '<table class="table is-striped is-fullwidth is-hidden"><thead><tr><th>Keyword</th><th>Relevance</th><tbody></tbody></table>');
+             parent.after(
+              '<textarea class="textarea code-editor is-hidden" rows="10" readonly></textarea>');
           for (var i = 0; i < result.length; i++) {
                parent.siblings(".table")
               .children("tbody")
               .append(
                 "<tr><td>" +
-                  result[i].class +
+                  result[i].text +
                   "</td><td>" +
-                  result[i].score +
+                  result[i].relevance +
                   "</td></tr>"
               );
           }
-          parent.siblings().children(".card-content").children(".tag").text("Classified");
-          parent.siblings().children(".card-content").children("span").toggleClass("is-info");
+          parent.siblings(".card-content").children(".tag").text("Classified");
+          parent.siblings(".card-content").children("span").toggleClass("is-info");
           $('.loader-wrapper').removeClass('is-active');
         }
         }
@@ -187,6 +198,7 @@ function readResults(){
         }
       });
       toggleTable();
+      showJSON(JSON.stringify(jsonValue,null,4));
     },
     error: function (data) {
       //$("p.error").text(data.statusText + ":" + "Check logs for more info");
@@ -238,29 +250,23 @@ function getUploadedImages(){
         }
         for (var i = 0; i < Object.keys(data).length; i++) {
           var buffer = Object.values(data)[i];
-          //console.log(buffer);
+          var str = atob(buffer).substring(0,150)+"...";
           let fileName = Object.keys(data)[i].split("/")[1];
           $("#column-multiline").append(
             '<div class="column is-one-quarter-desktop is-half-tablet">\
       <div class="card" id="' +
       fileName +
       '-card">\
-          <div class="card-image">\
-              <figure class="image is-4by3">\
-                <img id="' +
-              fileName +
-              '" src="data:image/jpeg;base64,' +
-              buffer +
-              '" alt="placeholder">\
-              </figure>\
-              <div class="card-content is-overlay">\
+              <div class="card-content">\
                 <span class="tag is-info is-pulled-left">\
                   Not classified\
                 </span><a id="' +
                 fileName +
                 '" class="is-pulled-right"><span class="icon"><i class="fas fa-trash-alt"></i> </span></a> \
+                <br>\
+    <p class="subtitle">'+ str +' \
+    </p>\
               </div>\
-          </div>\
           <footer class="card-footer">\
               <p id="' +
               fileName +
@@ -288,4 +294,5 @@ function getUploadedImages(){
     });
     return false;
   }
+  
 });

@@ -32,7 +32,7 @@ app.get('/items', async(req, res) => {
   req.pipe(
    await request.get(
       {
-        url: backendURL+"/items?prefix=images",
+        url: backendURL+"/items?prefix=files",
         agentOptions: {
           rejectUnauthorized: false
         }
@@ -50,13 +50,13 @@ app.get('/items', async(req, res) => {
   );
 });
 /*
- * Upload an image for Image classification
+ * Upload an image for Text analysis
  */
 app.post("/uploadimage", async(req, res) => {
     req.pipe(
      await request.post(
         {
-          url: backendURL+"/images",
+          url: backendURL+"/files",
           gzip: true,
           agentOptions: {
             rejectUnauthorized: false
