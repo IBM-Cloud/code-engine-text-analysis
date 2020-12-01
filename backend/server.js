@@ -59,7 +59,7 @@ function uploadFilesToCOS(req, res, next) {
       return next(err);
     }
     if (req.files.length === 0) {
-      return res.send("Upload an image...");
+      return res.send("Upload a text file...");
     } else if (req.files.length > 1) {
       return res.send(
         "Successfully uploaded " + req.files.length + " files to Object Storage"
@@ -179,7 +179,7 @@ app.get("/items", async (req, res, next) => {
   }
 });
 /*
- * Upload an image for Text analysis
+ * Upload a file for Text analysis
  */
 app.post("/files", uploadFilesToCOS, function (req, res, next) {});
 

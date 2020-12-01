@@ -50,9 +50,9 @@ app.get('/items', async(req, res) => {
   );
 });
 /*
- * Upload an image for Text analysis
+ * Upload a file for Text analysis
  */
-app.post("/uploadimage", async(req, res) => {
+app.post("/uploadfile", async(req, res) => {
     req.pipe(
      await request.post(
         {
@@ -77,7 +77,7 @@ app.post("/uploadimage", async(req, res) => {
   
 });
 
-app.post("/classifyimage", async(req, res) => {
+app.post("/analyzetext", async(req, res) => {
      req.pipe(
        await request.post(
         {
@@ -101,7 +101,7 @@ app.post("/classifyimage", async(req, res) => {
   
 });
 
-app.delete("/image", async (req, res) => {
+app.delete("/file", async (req, res) => {
   var itemName = req.query.filename;
   req.pipe(
     await request.delete(

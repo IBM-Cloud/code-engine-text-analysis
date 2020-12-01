@@ -1,7 +1,7 @@
 apiVersion: codeengine.cloud.ibm.com/v1beta1
 kind: JobRun
 metadata:
-  generateName: classify-images-
+  generateName: analyze-files-
 spec:
   jobDefinitionSpec:
     arraySpec: "1"

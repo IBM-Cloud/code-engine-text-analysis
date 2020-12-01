@@ -8,9 +8,9 @@ const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-unde
 const { IamAuthenticator } = require('ibm-watson/auth');
 
 const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
-  authenticator: new IamAuthenticator({ apikey: process.env.NLU_APIKEY }),
+  authenticator: new IamAuthenticator({ apikey: process.env.NLU_JOB_SECRET_APIKEY }),
   version: "2020-08-01",
-  serviceUrl: process.env.NLU_URL,
+  serviceUrl: process.env.NLU_JOB_SECRET_URL,
 });
 
 var config = {
