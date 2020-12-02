@@ -9,7 +9,7 @@ $(document).ready(function () {
   $("#file").change(function () {
     $("#uploadbtn").submit();
   });
-  
+
   $("#fileForm").submit(function () {
     // // console.log("i am submitted");
     $("#uploadbtn").addClass("is-loading");
@@ -58,7 +58,7 @@ function showNotification(data,cssclass)
  * Generate a unique identifier for each notification
  *
  * @param {*} len
- * @return {*} 
+ * @return {*}
  */
 function stringGen(len) {
   var text = "";
@@ -94,7 +94,7 @@ function notify(msg, mode, duration) {
 }
 
 /**
- * Delete a file 
+ * Delete a file
  *
  * @param {*} filename
  */
@@ -156,7 +156,7 @@ function readResults(){
       $("#analyzebtn").removeAttr("disabled");
       //console.log(response);
       var data = JSON.parse(response.data);
-      var jsonDict = {}; 
+      var jsonDict = {};
       //console.log(data);
       $("p.card-footer-item").each(function (index) {
         console.log( index + ": " + $( this ).text() );
@@ -188,7 +188,7 @@ function readResults(){
                   "</td></tr>"
               );
           }
-          parent.siblings(".card-content").children(".tag").text("Classified");
+          parent.siblings(".card-content").children(".tag").text("Analyzed");
           parent.siblings(".card-content").children("span").toggleClass("is-info");
           $('.loader-wrapper').removeClass('is-active');
         }
@@ -223,7 +223,7 @@ function readResults(){
 /**
  * Get the Uploaded Files from the COS Bucket
  *
- * @return {*} 
+ * @return {*}
  */
 function getuploadedFiles(){
     // // console.log("I am called");
@@ -259,7 +259,7 @@ function getuploadedFiles(){
       '-card">\
               <div class="card-content">\
                 <span class="tag is-info is-pulled-left">\
-                  Not classified\
+                  Not analyzed\
                 </span><a id="' +
                 fileName +
                 '" class="is-pulled-right"><span class="icon"><i class="fas fa-trash-alt"></i> </span></a> \
@@ -294,5 +294,5 @@ function getuploadedFiles(){
     });
     return false;
   }
-  
+
 });
