@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Image classification with Code Engine</title>
+    <title>Text analysis with Code Engine</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css"
@@ -23,7 +23,7 @@
       <div class="container">
         <div class="nav-left">
           <h1 class="navbar-item title">
-            Image Classification with Code Engine
+            Text analysis with Code Engine
           </h1>
           <span class="navbar-burger burger" data-target="navbarMenu">
             <span></span>
@@ -42,33 +42,33 @@
                 >
                   <label class="file-label">
                     <form
-                    action="/uploadimage"
+                    action="/uploadfile"
                       method="POST"
                       enctype="multipart/form-data"
-                      id="imageForm"
+                      id="fileForm"
                     >
                       <input
                         class="file-input"
                         type="file"
                         id="file"
                         name="files"
-                        accept="image/tiff, image/jpeg, image/png"
+                        accept=".txt"
                         multiple
                       />
                       <button
                   class="button is-medium is-info is-outlined"
                   id="uploadbtn"
                   type="submit"
-                  form="imageForm"
+                  form="fileForm"
                 ><span class="file-icon">
                   <i class="fas fa-upload"></i>
                 </span>
-                Upload image
+                Upload text file
                 </button>
                     </form>
                   </label>
                 </div>
-                <button id="classifybtn" class="button is-medium is-info is-outlined"><i class="fas fa-redo"></i></button>
+                <button id="analyzebtn" class="button is-medium is-info is-outlined"><i class="fas fa-redo"></i></button>
                 
             </div>
           </div>
@@ -101,7 +101,7 @@
           <div class="tabs is-centered">
             <ul>
               <li class="is-active"><a href="https://www.ibm.com/cloud" target="_blank"> <img src="./cloud.png" alt="IBM Cloud logo" width="16" height="16">&nbsp;IBM Cloud</a></li>
-              <li class="is-active"><a target="_blank" href="https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-image_classification_code_engine">
+              <li class="is-active"><a target="_blank" href="https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-text-analysis-code-engine">
                 <i class="fab fa-readme"></i>
                  &nbsp;Solution-tutorial
             </a></li>

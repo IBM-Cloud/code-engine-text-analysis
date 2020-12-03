@@ -4,13 +4,13 @@ require("dotenv").config({
   silent: true,
 });
 const fs = require("fs");
-const VisualRecognitionV3 = require("ibm-watson/visual-recognition/v3");
-const { IamAuthenticator } = require("ibm-watson/auth");
+const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-understanding/v1');
+const { IamAuthenticator } = require('ibm-watson/auth');
 
-const visualRecognition = new VisualRecognitionV3({
-  url: process.env.VR_JOB_SECRET_URL,
-  version: process.env.VR_VERSION || '2018-03-19',
-  authenticator: new IamAuthenticator({ apikey: process.env.VR_JOB_SECRET_APIKEY }),
+const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
+  authenticator: new IamAuthenticator({ apikey: process.env.NLU_JOB_SECRET_APIKEY }),
+  version: "2020-08-01",
+  serviceUrl: process.env.NLU_JOB_SECRET_URL,
 });
 
 var config = {
@@ -28,7 +28,7 @@ getBucketContents(process.env.COS_BUCKETNAME);
  * Get contents of a COS Bucket
  *
  * @param {*} bucketName
- * @return {*} 
+ * @return {*}
  */
 function getBucketContents(bucketName) {
   console.log(`Retrieving bucket contents from: ${bucketName}`);
@@ -54,7 +54,7 @@ function getBucketContents(bucketName) {
  *
  * @param {*} bucketName
  * @param {*} itemName
- * @return {*} 
+ * @return {*}
  */
 function getItem(bucketName, itemName) {
   console.log(`Retrieving item from bucket: ${bucketName}, key: ${itemName}`);
@@ -66,19 +66,36 @@ function getItem(bucketName, itemName) {
     .promise()
     .then((data) => {
       if (data != null) {
-        const params = {
-          imagesFile: Buffer.from(data.Body),
+        const str = "This is a cool way to test the application that is using natural language classification";
+        const analyzeParams = {
+          'text': Buffer.from(data.Body).toString(),
+          'features': {
+    'entities': {
+      'emotion': true,
+      'sentiment': true,
+      'limit': 2,
+    },
+    'keywords': {
+      'emotion': true,
+      'sentiment': true,
+      'limit': 5,
+    },
+            'categories': {
+            'limit': 5,
+            }
+          }
         };
 
-        visualRecognition
-          .classify(params)
-          .then((response) => {
-            console.log(JSON.stringify(response.result, null, 2));
-            createJsonFile(bucketName+'/results',itemName.split('/')[1]+'.json',JSON.stringify(response.result, null, 2));
+        naturalLanguageUnderstanding
+          .analyze(analyzeParams)
+          .then((analysisResults) => {
+            console.log(JSON.stringify(analysisResults, null, 2));
+            createJsonFile(bucketName+'/results',itemName.split('/')[1]+'.json',JSON.stringify(analysisResults.result, null, 2));
           })
           .catch((err) => {
-            console.log(err);
+            console.log("error:", err);
           });
+
         //console.log(data.body);
         //console.log('File Contents: ' + Buffer.from(data.Body).toString());
       }
@@ -93,19 +110,21 @@ function getItem(bucketName, itemName) {
  * @param {*} bucketName
  * @param {*} itemName
  * @param {*} fileText
- * @return {*} 
+ * @return {*}
  */
 function createJsonFile(bucketName, itemName, fileText) {
-    console.log(`Creating new item: ${itemName}`);
-    return cosClient.putObject({
-        Bucket: bucketName, 
-        Key: itemName, 
-        Body: fileText
-    }).promise()
+  console.log(`Creating new item: ${itemName}`);
+  return cosClient
+    .putObject({
+      Bucket: bucketName,
+      Key: itemName,
+      Body: fileText,
+    })
+    .promise()
     .then(() => {
-        console.log(`Item: ${itemName} created!`);
+      console.log(`Item: ${itemName} created!`);
     })
     .catch((e) => {
-        console.error(`ERROR: ${e.code} - ${e.message}\n`);
+      console.error(`ERROR: ${e.code} - ${e.message}\n`);
     });
 }

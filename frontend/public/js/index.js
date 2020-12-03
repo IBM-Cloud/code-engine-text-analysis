@@ -1,7 +1,7 @@
 $(document).ready(function () {
   $('.loader-wrapper').addClass('is-active');
-  getUploadedImages();
-  $("#classifybtn").attr("disabled", true);
+  getuploadedFiles();
+  $("#analyzebtn").attr("disabled", true);
   $("#uploadbtn").click(function(e){
     $("#file").click();
     e.preventDefault();
@@ -9,8 +9,8 @@ $(document).ready(function () {
   $("#file").change(function () {
     $("#uploadbtn").submit();
   });
-  
-  $("#imageForm").submit(function () {
+
+  $("#fileForm").submit(function () {
     // // console.log("i am submitted");
     $("#uploadbtn").addClass("is-loading");
     $("#table tbody tr").remove();
@@ -27,8 +27,8 @@ $(document).ready(function () {
         //$("p.success").text(response.data);
         showNotification(response.data,"is-primary");
         $("#uploadbtn").removeClass("is-loading");
-        $("#classifybtn").removeAttr("disabled");
-        getUploadedImages();
+        $("#analyzebtn").removeAttr("disabled");
+        getuploadedFiles();
       },
     });
     return false;
@@ -58,7 +58,7 @@ function showNotification(data,cssclass)
  * Generate a unique identifier for each notification
  *
  * @param {*} len
- * @return {*} 
+ * @return {*}
  */
 function stringGen(len) {
   var text = "";
@@ -94,17 +94,17 @@ function notify(msg, mode, duration) {
 }
 
 /**
- * Delete an image 
+ * Delete a file
  *
  * @param {*} filename
  */
-function deleteImage(filename){
-  $("#classifybtn").attr("disabled", true);
+function deleteFile(filename){
+  $("#analyzebtn").attr("disabled", true);
   $.ajax({
     type: "DELETE",
-    url: "/image?filename="+filename,
+    url: "/file?filename="+filename,
     success: function (response) {
-      showNotification("Image deleted successfully...","is-primary");
+      showNotification("File deleted successfully...","is-primary");
     },
     error: function (data) {
      console.log(data);
@@ -114,12 +114,23 @@ function deleteImage(filename){
 function addClickToDelete(){
   $(".card-content").on("click","a", function (){
     var filename=$(this).attr("id");
-    deleteImage(filename);
-    getUploadedImages();
+    deleteFile(filename);
+    getuploadedFiles();
     $("#column-multiline").remove($(this).parents(".card"));
   });
   return false;
 }
+
+function showJSON(jsonDict){
+  $('.div-toggle').each(function (index){
+     $(this).on("click", function(){
+        $(this).parent().siblings(".code-editor").text(jsonDict[index]);
+        $(this).parent().siblings(".code-editor").toggleClass('is-hidden');
+     });
+
+   });
+}
+
 /**
  * Toggle the results table
  *
@@ -140,11 +151,12 @@ function toggleTable(){
 function readResults(){
   $.ajax({
     type: "POST",
-    url: "/classifyimage",
+    url: "/analyzetext",
     success: function (response) {
-      $("#classifybtn").removeAttr("disabled");
+      $("#analyzebtn").removeAttr("disabled");
       //console.log(response);
       var data = JSON.parse(response.data);
+      var jsonDict = {};
       //console.log(data);
       $("p.card-footer-item").each(function (index) {
         console.log( index + ": " + $( this ).text() );
@@ -154,31 +166,30 @@ function readResults(){
         //console.log(value);
         //console.log(Object.keys(data).length);
         if (Object.keys(data).length !== 0 && data.hasOwnProperty(value)) {
-        var result = data[value].images[0].classifiers[0].classes.sort(
-          function (a, b) {
-            return b.score - a.score;
-          }
-        );
-        //console.log(result);
+        var result = data[value].keywords;
+        jsonDict[index] = JSON.stringify(data[value],null,4);
+        console.log(result);
         let parent = $(this).parent(".card-footer");
         if (result.length > 1) {
-             parent.append('<a class="card-footer-item table-toggle is-pulled-right">show results<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span></a><br>')
+             parent.append('<a class="card-footer-item table-toggle">Keywords<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span></a><br>')
+             parent.append('<a class="card-footer-item div-toggle is-pulled-right">JSON&lt;\/&gt;</a><br>')
              parent.after(
-              '<table class="table is-striped is-fullwidth is-hidden"><tbody></tbody></table>');
-
+              '<textarea class="textarea code-editor is-hidden" rows="10" readonly></textarea>');
+             parent.after(
+              '<table class="table is-striped is-fullwidth is-hidden"><thead><tr><th>Keyword</th><th>Relevance</th><tbody></tbody></table>');
           for (var i = 0; i < result.length; i++) {
                parent.siblings(".table")
               .children("tbody")
               .append(
                 "<tr><td>" +
-                  result[i].class +
+                  result[i].text +
                   "</td><td>" +
-                  result[i].score +
+                  result[i].relevance +
                   "</td></tr>"
               );
           }
-          parent.siblings().children(".card-content").children(".tag").text("Classified");
-          parent.siblings().children(".card-content").children("span").toggleClass("is-info");
+          parent.siblings(".card-content").children(".tag").text("Analyzed");
+          parent.siblings(".card-content").children("span").toggleClass("is-info");
           $('.loader-wrapper').removeClass('is-active');
         }
         }
@@ -187,19 +198,20 @@ function readResults(){
         }
       });
       toggleTable();
+      showJSON(jsonDict);
     },
     error: function (data) {
       //$("p.error").text(data.statusText + ":" + "Check logs for more info");
       console.log(data);
-      $("#classifybtn").attr("disabled", true);
+      $("#analyzebtn").attr("disabled", true);
       $('.loader-wrapper').removeClass('is-active');
     },
   });
 }
-  $("#classifybtn").click(function () {
-    $("#classifybtn").attr("disabled", true);
-    $(".tag").text("classifying...");
-    getUploadedImages();
+  $("#analyzebtn").click(function () {
+    $("#analyzebtn").attr("disabled", true);
+    $(".tag").text("analyzeing...");
+    getuploadedFiles();
   });
 
   // Check for click events on the navbar burger icon
@@ -209,11 +221,11 @@ function readResults(){
     $(".navbar-menu").toggleClass("is-active");
   });
 /**
- * Get the Uploaded Images from the COS Bucket
+ * Get the Uploaded Files from the COS Bucket
  *
- * @return {*} 
+ * @return {*}
  */
-function getUploadedImages(){
+function getuploadedFiles(){
     // // console.log("I am called");
     $('.loader-wrapper').addClass('is-active');
     $.ajax({
@@ -224,7 +236,7 @@ function getUploadedImages(){
         //console.log(response);
         if(response.data.includes("error") ) {
           showNotification("An error occurred, check your backend connection to cloud services", "is-danger");
-          $("#classifybtn").attr("disabled", true);
+          $("#analyzebtn").attr("disabled", true);
           $('.loader-wrapper').removeClass('is-active');
           return false;
         }
@@ -232,35 +244,29 @@ function getUploadedImages(){
         //console.log(data);
 
         if(Object.keys(data).length === 0) {
-          showNotification("Upload an image...", "is-info");
+          showNotification("Upload a text file...", "is-info");
           $('.loader-wrapper').removeClass('is-active');
           return false;
         }
         for (var i = 0; i < Object.keys(data).length; i++) {
           var buffer = Object.values(data)[i];
-          //console.log(buffer);
+          var str = atob(buffer).substring(0,150)+"...";
           let fileName = Object.keys(data)[i].split("/")[1];
           $("#column-multiline").append(
             '<div class="column is-one-quarter-desktop is-half-tablet">\
       <div class="card" id="' +
       fileName +
       '-card">\
-          <div class="card-image">\
-              <figure class="image is-4by3">\
-                <img id="' +
-              fileName +
-              '" src="data:image/jpeg;base64,' +
-              buffer +
-              '" alt="placeholder">\
-              </figure>\
-              <div class="card-content is-overlay">\
+              <div class="card-content">\
                 <span class="tag is-info is-pulled-left">\
-                  Not classified\
+                  Not analyzed\
                 </span><a id="' +
                 fileName +
                 '" class="is-pulled-right"><span class="icon"><i class="fas fa-trash-alt"></i> </span></a> \
+                <br>\
+    <p class="subtitle">'+ str +' \
+    </p>\
               </div>\
-          </div>\
           <footer class="card-footer">\
               <p id="' +
               fileName +
@@ -282,10 +288,11 @@ function getUploadedImages(){
        let error= data.statusText + ":" + "An error occurred while uploading, check your backend logs.";
          console.log(data);
         showNotification(error, "is-danger");
-        $("#classifybtn").attr("disabled", true);
+        $("#analyzebtn").attr("disabled", true);
        $('.loader-wrapper').removeClass('is-active');
       }
     });
     return false;
   }
+
 });

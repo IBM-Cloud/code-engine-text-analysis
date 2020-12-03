@@ -34,7 +34,7 @@ function getCosClient() {
 }
 
 /**
- * Upload images to COS Bucket
+ * Upload files to COS Bucket
  *
  * @param {*} req
  * @param {*} res
@@ -44,7 +44,7 @@ function uploadFilesToCOS(req, res, next) {
   var upload = multer({
     storage: multerS3({
       s3: getCosClient(),
-      bucket: process.env.COS_BUCKETNAME + "/images",
+      bucket: process.env.COS_BUCKETNAME + "/files",
       metadata: function (req, file, cb) {
         cb(null, { fieldName: file.fieldname });
       },
@@ -59,20 +59,20 @@ function uploadFilesToCOS(req, res, next) {
       return next(err);
     }
     if (req.files.length === 0) {
-      return res.send("Upload an image...");
+      return res.send("Upload a text file...");
     } else if (req.files.length > 1) {
       return res.send(
-        "Successfully uploaded " + req.files.length + " images to Object Storage"
+        "Successfully uploaded " + req.files.length + " files to Object Storage"
       );
     } else {
       return res.send(
-        "Successfully uploaded " + req.files.length + " image to Object Storage"
+        "Successfully uploaded " + req.files.length + " file to Object Storage"
       );
     }
   });
 }
 /**
- *Get COS bucket contents (images)
+ *Get COS bucket contents (files)
  *
  * @param {*} req
  * @param {*} res
@@ -179,9 +179,9 @@ app.get("/items", async (req, res, next) => {
   }
 });
 /*
- * Upload an image for Image classification
+ * Upload a file for Text analysis
  */
-app.post("/images", uploadFilesToCOS, function (req, res, next) {});
+app.post("/files", uploadFilesToCOS, function (req, res, next) {});
 
 /**
 * Get the JSON from the results folder of COS Bucket
@@ -202,7 +202,7 @@ app.post("/results", async (req, res, next) => {
 app.delete("/item", async (req, res, next) => {
   var itemName = req.query.filename;
   console.log(itemName);
-  await deleteItem(req, res, next, null, itemName, "images");
+  await deleteItem(req, res, next, null, itemName, "files");
   await deleteItem(req, res, next, null, itemName, "results");
 });
 

@@ -32,7 +32,7 @@ app.get('/items', async(req, res) => {
   req.pipe(
    await request.get(
       {
-        url: backendURL+"/items?prefix=images",
+        url: backendURL+"/items?prefix=files",
         agentOptions: {
           rejectUnauthorized: false
         }
@@ -50,13 +50,13 @@ app.get('/items', async(req, res) => {
   );
 });
 /*
- * Upload an image for Image classification
+ * Upload a file for Text analysis
  */
-app.post("/uploadimage", async(req, res) => {
+app.post("/uploadfile", async(req, res) => {
     req.pipe(
      await request.post(
         {
-          url: backendURL+"/images",
+          url: backendURL+"/files",
           gzip: true,
           agentOptions: {
             rejectUnauthorized: false
@@ -77,7 +77,7 @@ app.post("/uploadimage", async(req, res) => {
   
 });
 
-app.post("/classifyimage", async(req, res) => {
+app.post("/analyzetext", async(req, res) => {
      req.pipe(
        await request.post(
         {
@@ -101,7 +101,7 @@ app.post("/classifyimage", async(req, res) => {
   
 });
 
-app.delete("/image", async (req, res) => {
+app.delete("/file", async (req, res) => {
   var itemName = req.query.filename;
   req.pipe(
     await request.delete(

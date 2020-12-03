@@ -7,9 +7,9 @@ do
     cd $folder
     if [ $folder == "jobs" ]
     then
-        docker build . -t ibmcom/backend-job && docker push ibmcom/backend-job
+        docker build . -t $1/backend-job && docker push $1/backend-job
     else
-        docker build . -t ibmcom/$folder && docker push ibmcom/$folder
+        docker build . -t $1/$folder && docker push $1/$folder
     fi
     cd ..
 done
