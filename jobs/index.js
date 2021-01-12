@@ -8,18 +8,18 @@ const NaturalLanguageUnderstandingV1 = require('ibm-watson/natural-language-unde
 const { IamAuthenticator } = require('ibm-watson/auth');
 
 const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
-  authenticator: new IamAuthenticator({ apikey: process.env.NLU_JOB_SECRET_APIKEY }),
+  authenticator: new IamAuthenticator({ apikey: process.env.NLU_JOB_APIKEY }),
   version: "2020-08-01",
-  serviceUrl: process.env.NLU_JOB_SECRET_URL,
+  serviceUrl: process.env.NLU_JOB_URL,
 });
 
 var config = {
   endpoint:
     process.env.COS_ENDPOINT ||
     "s3.us-south.cloud-object-storage.appdomain.cloud",
-  apiKeyId: process.env.COS_JOB_SECRET_APIKEY,
+  apiKeyId: process.env.COS_JOB_APIKEY,
   ibmAuthEndpoint: "https://iam.cloud.ibm.com/identity/token",
-  serviceInstanceId: process.env.COS_JOB_SECRET_RESOURCE_INSTANCE_ID,
+  serviceInstanceId: process.env.COS_JOB_RESOURCE_INSTANCE_ID,
 };
 
 var cosClient = new myCOS.S3(config);
