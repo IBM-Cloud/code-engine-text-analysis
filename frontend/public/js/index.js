@@ -23,9 +23,9 @@ $(document).ready(function () {
       },
       success: function (response) {
         // // console.log("i am here too");
-        // console.log(response.data);
-        //$("p.success").text(response.data);
-        showNotification(response.data,"is-primary");
+        // console.log(response);
+        //$("p.success").text(response);
+        showNotification(response,"is-primary");
         $("#uploadbtn").removeClass("is-loading");
         $("#analyzebtn").removeAttr("disabled");
         getuploadedFiles();
@@ -103,6 +103,9 @@ function deleteFile(filename){
   $.ajax({
     type: "DELETE",
     url: "/file?filename="+filename,
+    cache:false,
+    async:false,
+    dataType:"json",
     success: function (response) {
       showNotification("File deleted successfully...","is-primary");
     },
@@ -150,27 +153,24 @@ function toggleTable(){
  */
 function readResults(){
   $.ajax({
-    type: "POST",
-    url: "/analyzetext",
+    type: "GET",
+    url: "/results",
+    cache:false,
+    dataType:"json",
     success: function (response) {
       $("#analyzebtn").removeAttr("disabled");
       //console.log(response);
-      var data = JSON.parse(response.data);
       var jsonDict = {};
-      //console.log(data);
       $("p.card-footer-item").each(function (index) {
-        console.log( index + ": " + $( this ).text() );
+        //console.log( index + ": " + $( this ).text() );
         var id = $(this).attr("id");
         //console.log(id);
-        var value = "results/" + id.toString() + ".json";
-        //console.log(value);
-        //console.log(Object.keys(data).length);
-        if (Object.keys(data).length !== 0 && data.hasOwnProperty(value)) {
-        var result = data[value].keywords;
-        jsonDict[index] = JSON.stringify(data[value],null,4);
-        console.log(result);
+        var value = id.toString();
+        if (Object.keys(response).length !== 0 && response.hasOwnProperty(value)) {
+        var result = response[value].keywords;
+        jsonDict[index] = JSON.stringify(response[value],null,4);
         let parent = $(this).parent(".card-footer");
-        if (result.length > 1) {
+        if (result !== undefined && result.length > 1) {
              parent.append('<a class="card-footer-item table-toggle">Keywords<span class="icon"><i class="fas fa-angle-down" aria-hidden="true"></i></span></a><br>')
              parent.append('<a class="card-footer-item div-toggle is-pulled-right">JSON&lt;\/&gt;</a><br>')
              parent.after(
@@ -202,15 +202,16 @@ function readResults(){
     },
     error: function (data) {
       //$("p.error").text(data.statusText + ":" + "Check logs for more info");
-      console.log(data);
+      //onsole.log(data);
       $("#analyzebtn").attr("disabled", true);
       $('.loader-wrapper').removeClass('is-active');
     },
   });
+  return false;
 }
   $("#analyzebtn").click(function () {
     $("#analyzebtn").attr("disabled", true);
-    $(".tag").text("analyzeing...");
+    $(".tag").text("analyzing...");
     getuploadedFiles();
   });
 
@@ -230,30 +231,27 @@ function getuploadedFiles(){
     $('.loader-wrapper').addClass('is-active');
     $.ajax({
       type: "GET",
-      url: "/items",
+      url: "/files",
+      cache:false,
+      dataType:"json",
       success: function (response) {
         $("#column-multiline").empty();
-        //console.log(response);
-        if(response.data.includes("error") ) {
+        if(response.error) {
           showNotification("An error occurred, check your backend connection to cloud services", "is-danger");
           $("#analyzebtn").attr("disabled", true);
           $('.loader-wrapper').removeClass('is-active');
           return false;
         }
-        var data = JSON.parse(response.data);
-        //console.log(data);
-
-        if(Object.keys(data).length === 0) {
+        if(Object.keys(response).length === 0) {
           showNotification("Upload a text file...", "is-info");
           $('.loader-wrapper').removeClass('is-active');
           return false;
         }
-        for (var i = 0; i < Object.keys(data).length; i++) {
-          var buffer = Object.values(data)[i];
-          var str = atob(buffer).substring(0,150)+"...";
-          let fileName = Object.keys(data)[i].split("/")[1];
+        for (var i = 0; i < Object.keys(response).length; i++) {
+          var str = Object.values(response)[i];
+          let fileName = Object.keys(response)[i];
           $("#column-multiline").append(
-            '<div class="column is-one-quarter-desktop is-half-tablet">\
+            '<div class="column is-4-desktop is-half-tablet">\
       <div class="card" id="' +
       fileName +
       '-card">\

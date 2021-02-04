@@ -5,8 +5,9 @@ const multerS3 = require("multer-s3");
 const express = require("express");
 const app = express();
 const path = require("path");
+var atob = require("atob");
 require("dotenv").config({
-  silent: true
+  silent: true,
 });
 
 const cors = require("cors");
@@ -84,8 +85,6 @@ async function getBucketContents(req, res, next, prefix) {
   try {
     let cos = getCosClient();
     let bucketName = process.env.COS_BUCKETNAME;
-    var resultDict = {};
-    var result;
     console.log(`Retrieving bucket contents from: ${bucketName}`);
 
     const data = await cos
@@ -95,14 +94,35 @@ async function getBucketContents(req, res, next, prefix) {
       })
       .promise();
     if (data != null && data.Contents != null) {
-      for (var i = 0; i < data.Contents.length; i++) {
-        var itemKey = data.Contents[i].Key;
-        var itemSize = data.Contents[i].Size;
+      let arrayOfDict=[];
+      let finalArray = data.Contents.map(async (value) => {
+        let resultDict = {};
+        var itemKey = value.Key;
+        var itemSize = value.Size;
         console.log(`Item: ${itemKey} (${itemSize} bytes).`);
-        result = await getItem(bucketName, itemKey, prefix);
-        resultDict[itemKey] = result;
-      }
-      res.send(resultDict);
+        let result = await getItem(bucketName, itemKey, prefix);
+        let fileKey = itemKey.split('/')[1];
+        if (prefix === "results") {
+          let str = result;
+          resultDict[fileKey] = JSON.parse(str);
+          resultDict["time"] = value.LastModified;
+
+        } else {
+          let str = result.substring(0, 150) + "...";
+          resultDict[fileKey] = str;
+          resultDict["time"] = value.LastModified;
+        }
+        arrayOfDict.push(resultDict);
+      });
+      
+      // resolving all promises
+      await Promise.all(finalArray);
+      let arrayResult = arrayOfDict.sort((a,b)=>{ return new Date(a.time)-new Date(b.time)});
+      let finalDict = {};
+      let _ = arrayResult.map((value) => {
+         finalDict[Object.keys(value)[0]] = Object.values(value)[0];
+      });
+      return finalDict;
     }
   } catch (e) {
     console.error(`ERROR: ${e.code} - ${e.message}\n`);
@@ -115,7 +135,7 @@ async function getBucketContents(req, res, next, prefix) {
  * @param {*} bucketName
  * @param {*} itemName
  * @param {*} prefix
- * @return {*} 
+ * @return {*}
  */
 async function getItem(bucketName, itemName, prefix) {
   let cos = getCosClient();
@@ -128,24 +148,18 @@ async function getItem(bucketName, itemName, prefix) {
       })
       .promise();
     if (data != null) {
-      if (prefix === "results") {
-        return JSON.parse(data.Body);
-      } else {  
-        return Buffer.from(data.Body).toString("base64");
-      }
+      let buffer = Buffer.from(data.Body).toString();
+      return buffer;
     }
   } catch (e) {
     console.error(`ERROR: ${e.code} - ${e.message}\n`);
   }
 }
 
-async function deleteItem(req, res, next, bucketName, itemName, prefix) {
+async function deleteItem(req, res, next, fileName, prefix) {
   let cos = getCosClient();
   let bucketname = process.env.COS_BUCKETNAME;
-  itemName = prefix + "/" + itemName;
-  if (prefix === "results") {
-    itemName = itemName + ".json";
-  }
+  let itemName = prefix + "/" + fileName;
   console.log(`Deleting item: ${itemName}`);
   try {
     await cos
@@ -153,9 +167,9 @@ async function deleteItem(req, res, next, bucketName, itemName, prefix) {
         Bucket: bucketname,
         Key: itemName,
       })
-      .promise();
+      .promise()
     console.log(`Item: ${itemName} deleted!`);
-    res.send(`Item: ${itemName} deleted!`);
+    return `Item: ${itemName} deleted!`;
   } catch (e) {
     console.error(`ERROR: ${e.code} - ${e.message}\n`);
   }
@@ -168,11 +182,10 @@ app.get("/", function (req, res, next) {
   res.send("Hello World! from backend");
 });
 
-app.get("/items", async (req, res, next) => {
+app.get("/files", async (req, res, next) => {
   try {
-    var prefix = req.query.prefix;
-    // console.log(prefix);
-    await getBucketContents(req, res, next, prefix);
+    let result = await getBucketContents(req, res, next, "files");
+    res.send(result);
   } catch (error) {
     // Passes errors into the error handler
     return next(error);
@@ -184,11 +197,12 @@ app.get("/items", async (req, res, next) => {
 app.post("/files", uploadFilesToCOS, function (req, res, next) {});
 
 /**
-* Get the JSON from the results folder of COS Bucket
+ * Get the JSON from the results folder of COS Bucket
  */
-app.post("/results", async (req, res, next) => {
+app.get("/results", async (req, res, next) => {
   try {
-    await getBucketContents(req, res, next, "results");
+    let result = await getBucketContents(req, res, next, "results");
+    res.send(result);
   } catch (error) {
     // Passes errors into the error handler
     console.log(error);
@@ -197,17 +211,19 @@ app.post("/results", async (req, res, next) => {
 });
 
 /**
-* Delete an item from the COS Bucket
+ * Delete an item from the COS Bucket
  */
-app.delete("/item", async (req, res, next) => {
+app.delete("/file", async (req, res, next) => {
   var itemName = req.query.filename;
   console.log(itemName);
-  await deleteItem(req, res, next, null, itemName, "files");
-  await deleteItem(req, res, next, null, itemName, "results");
+  let deleteFile = await deleteItem(req, res, next, itemName, "files");
+  let deleteResult = await deleteItem(req,res,next, itemName,"results");
+  await Promise.all([deleteFile , deleteResult]);
+  res.send(`Item: ${itemName} deleted!`);
 });
 
 /**
-* Middleware to handle not supported routes
+ * Middleware to handle not supported routes
  */
 app.use((req, res, next) => {
   const error = new Error("Not found");

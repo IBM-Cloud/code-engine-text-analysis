@@ -28,11 +28,11 @@ app.get('/', function(req, res) {
     }
 });
 
-app.get('/items', async(req, res) => {
+app.get('/files', async(req, res) => {
   req.pipe(
    await request.get(
       {
-        url: backendURL+"/items?prefix=files",
+        url: backendURL+"/files",
         agentOptions: {
           rejectUnauthorized: false
         }
@@ -42,8 +42,9 @@ app.get('/items', async(req, res) => {
           res.status(400).send(error.message);
         }
         else{
-        //console.log(body);
-        res.send({ data: body });
+        //console.log("RESPONSE", resp);
+        //console.log("BODY",resp.body);
+        res.send(body);
         }
       }
     )
@@ -69,7 +70,7 @@ app.post("/uploadfile", async(req, res) => {
           }
           else{
           //console.log(body);
-          res.send({ data: body });
+          res.send(body);
           }
         }
       )
@@ -77,9 +78,9 @@ app.post("/uploadfile", async(req, res) => {
   
 });
 
-app.post("/analyzetext", async(req, res) => {
+app.get("/results", async(req, res) => {
      req.pipe(
-       await request.post(
+       await request.get(
         {
           url: backendURL+"/results",
           agentOptions: {
@@ -93,7 +94,7 @@ app.post("/analyzetext", async(req, res) => {
           }
           else{
           //console.log(body);
-          res.send({ data: body });
+          res.send(body);
           }
         }
       )
@@ -106,7 +107,7 @@ app.delete("/file", async (req, res) => {
   req.pipe(
     await request.delete(
       {
-        url: backendURL+"/item?filename="+itemName,
+        url: backendURL+"/file?filename="+itemName,
         agentOptions: {
           rejectUnauthorized: false
         }
@@ -118,7 +119,7 @@ app.delete("/file", async (req, res) => {
         }
         else{
         //console.log(body);
-        res.send({ data: body });
+        res.send(body);
         }
       }
     )

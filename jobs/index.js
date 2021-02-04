@@ -66,7 +66,6 @@ function getItem(bucketName, itemName) {
     .promise()
     .then((data) => {
       if (data != null) {
-        const str = "This is a cool way to test the application that is using natural language classification";
         const analyzeParams = {
           'text': Buffer.from(data.Body).toString(),
           'features': {
@@ -89,8 +88,8 @@ function getItem(bucketName, itemName) {
         naturalLanguageUnderstanding
           .analyze(analyzeParams)
           .then((analysisResults) => {
-            console.log(JSON.stringify(analysisResults, null, 2));
-            createJsonFile(bucketName+'/results',itemName.split('/')[1]+'.json',JSON.stringify(analysisResults.result, null, 2));
+            //console.log(JSON.stringify(analysisResults, null, 2));
+            createJsonFile(bucketName+'/results',itemName.split('/')[1],JSON.stringify(analysisResults.result, null, 2));
           })
           .catch((err) => {
             console.log("error:", err);

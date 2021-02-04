@@ -9,6 +9,7 @@
   "author": "Vidyasagar Machupalli",
   "license": "ISC",
   "dependencies": {
+    "atob": "^2.1.2",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
