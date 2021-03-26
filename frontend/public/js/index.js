@@ -249,6 +249,7 @@ function getuploadedFiles(){
         }
         for (var i = 0; i < Object.keys(response).length; i++) {
           var str = Object.values(response)[i];
+          str = str.replace(/\\u0000/g, '').replace(/\�/g, '');
           let fileName = Object.keys(response)[i];
           $("#column-multiline").append(
             '<div class="column is-4-desktop is-half-tablet">\

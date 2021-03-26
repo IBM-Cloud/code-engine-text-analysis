@@ -66,8 +66,9 @@ function getItem(bucketName, itemName) {
     .promise()
     .then((data) => {
       if (data != null) {
+        var file_data = Buffer.from(data.Body).toString('utf8');
         const analyzeParams = {
-          'text': Buffer.from(data.Body).toString(),
+          'text': file_data,
           'features': {
     'entities': {
       'emotion': true,
@@ -80,13 +81,16 @@ function getItem(bucketName, itemName) {
       'limit': 5,
     },
             'categories': {
-            'limit': 5,
+            'limit': 5
             }
           }
         };
-
+        
+        var analyzeParamsString = JSON.stringify(analyzeParams);
+        analyzeParamsString = analyzeParamsString.replace(/\\u0000/g, '').replace(/\�/g, '');
+        var analyzeparameters = JSON.parse(analyzeParamsString);
         naturalLanguageUnderstanding
-          .analyze(analyzeParams)
+          .analyze(analyzeparameters)
           .then((analysisResults) => {
             //console.log(JSON.stringify(analysisResults, null, 2));
             createJsonFile(bucketName+'/results',itemName.split('/')[1],JSON.stringify(analysisResults.result, null, 2));
