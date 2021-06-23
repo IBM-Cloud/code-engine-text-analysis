@@ -235,7 +235,7 @@ $(document).ready(function () {
         $("#analyzebtn").attr("disabled", true);
         $(".loader-wrapper").removeClass("is-active");
       },
-      complete: function (data) {
+      /*complete: function (data) {
         setTimeout(function () {
           readResults();
           if (response_length > result_length) {
@@ -244,7 +244,7 @@ $(document).ready(function () {
           result_length = response_length;
           //console.log("RESULTS", result_length, response_length);
         }, 30000);
-      },
+      },*/
     });
     return false;
   }
