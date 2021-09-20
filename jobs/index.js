@@ -13,6 +13,7 @@ const naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
   serviceUrl: process.env.NLU_JOB_URL,
 });
 
+function getCosClient() {
 var config = {
   endpoint:
     process.env.COS_ENDPOINT ||
@@ -23,6 +24,8 @@ var config = {
 };
 
 var cosClient = new myCOS.S3(config);
+return cosClient;
+}
 getBucketContents(process.env.COS_BUCKETNAME);
 /**
  * Get contents of a COS Bucket
@@ -31,8 +34,9 @@ getBucketContents(process.env.COS_BUCKETNAME);
  * @return {*}
  */
 function getBucketContents(bucketName) {
+  let cos = getCosClient();
   console.log(`Retrieving bucket contents from: ${bucketName}`);
-  return cosClient
+  return cos
     .listObjects({ Bucket: bucketName })
     .promise()
     .then((data) => {
@@ -57,8 +61,9 @@ function getBucketContents(bucketName) {
  * @return {*}
  */
 function getItem(bucketName, itemName) {
+  let cos = getCosClient();
   console.log(`Retrieving item from bucket: ${bucketName}, key: ${itemName}`);
-  return cosClient
+  return cos
     .getObject({
       Bucket: bucketName,
       Key: itemName,
@@ -116,8 +121,9 @@ function getItem(bucketName, itemName) {
  * @return {*}
  */
 function createJsonFile(bucketName, itemName, fileText) {
+  let cos = getCosClient();
   console.log(`Creating new item: ${itemName}`);
-  return cosClient
+  return cos
     .putObject({
       Bucket: bucketName,
       Key: itemName,

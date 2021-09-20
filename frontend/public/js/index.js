@@ -276,8 +276,9 @@ $(document).ready(function () {
       success: function (response) {
         $("#column-multiline").empty();
         if (response.error) {
+          console.log(response.error);
           showNotification(
-            "An error occurred, check your backend connection to cloud services",
+            "An error occurred:" + response.error.message,
             "is-danger"
           );
           $("#analyzebtn").attr("disabled", true);
