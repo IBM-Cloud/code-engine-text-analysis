@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ICR_NAMESPACE: solution-tutorials
-      ICR_REPOSITORY: tutorial-application-log-analysis
+      ICR_REPOSITORY_FRONTEND: tutorial-text-analysis-code-engine-frontend
+      ICR_REPOSITORY_BACKEND: tutorial-text-analysis-code-engine-backend
+      ICR_REPOSITORY_BACKEND_JOB: tutorial-text-analysis-code-engine-backend-job
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -23,15 +25,46 @@ jobs:
           password: ${{ secrets.ICR_TOKEN }}
       
       - name: Extract metadata (tags, labels) for Docker
-        id: meta
+        id: meta-frontend
         uses: docker/metadata-action@v3.6.2
         with:
-          images: icr.io/${{ env.ICR_NAMESPACE }}/${{ env.ICR_REPOSITORY }}
+          images: icr.io/${{ env.ICR_NAMESPACE }}/${{ env.ICR_REPOSITORY_FRONTEND }}
       
       - name: Build and push image
         uses: docker/build-push-action@v2.8.0
         with:
-          context: .
+          context: ./frontend
+          file: ./frontend/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta-backend
+        uses: docker/metadata-action@v3.6.2
+        with:
+          images: icr.io/${{ env.ICR_NAMESPACE }}/${{ env.ICR_REPOSITORY_BACKEND }}
+      
+      - name: Build and push image
+        uses: docker/build-push-action@v2.8.0
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+          
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta-backend-job
+        uses: docker/metadata-action@v3.6.2
+        with:
+          images: icr.io/${{ env.ICR_NAMESPACE }}/${{ env.ICR_REPOSITORY_BACKEND_JOB }}
+      
+      - name: Build and push image
+        uses: docker/build-push-action@v2.8.0
+        with:
+          context: ./jobs
+          file: ./jobs/Dockerfile
+          push: true
+          tags: ${{ steps.meta-backend-job.outputs.tags }}
+          labels: ${{ steps.meta-backend-job.outputs.labels }}          
