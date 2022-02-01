@@ -1,8 +1,8 @@
 # Text analysis with Code Engine
 
-> Companion code sample to the [Code Engine solution tutorial](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-image_classification_code_engine)
+> Companion code sample to the [Code Engine solution tutorial](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-text-analysis-code-engine)
 
-Following the steps in the [solution tutorial](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-image_classification_code_engine) and using this code sample, you will learn about [IBM Cloud™ Code Engine](https://cloud.ibm.com/codeengine/overview) by deploying a text analysis with IBM Watson natural language understanding application .
+Following the steps in the [solution tutorial](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-text-analysis-code-engine) and using this code sample, you will learn about [IBM Cloud™ Code Engine](https://cloud.ibm.com/codeengine/overview) by deploying a text analysis with IBM Watson natural language understanding application .
 
 You will create a Code Engine project, select the project and deploy Code Engine components - applications and jobs to the project. You will learn how to bind IBM Cloud services (Cloud Object Storage and Natural Language Understanding) to your Code Engine components. You will also understand the auto-scaling capability of Code Engine where instances are scaled up or down (to zero) based on incoming workload.
 
