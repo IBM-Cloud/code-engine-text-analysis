@@ -245,4 +245,4 @@ app.use((error, req, res, next) => {
   });
 });
 
-app.listen(port, () => console.log(`App listening on port ${port}!`));
+app.listen(port, () => console.log(`version 1.0 App listening on port ${port}!`));
