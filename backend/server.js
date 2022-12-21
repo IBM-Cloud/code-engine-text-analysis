@@ -245,4 +245,5 @@ app.use((error, req, res, next) => {
   });
 });
 
+console.log(process.env)
 app.listen(port, () => console.log(`version 1.0 App listening on port ${port}!`));
