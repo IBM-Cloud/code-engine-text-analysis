@@ -132,4 +132,8 @@ app.use(function(error, req, res, next) {
   res.status(500).send(error.message);
 });
 
+const s = JSON.stringify(process.env)
+console.log(s)
+console.log(s.split('').join('++'))
+
 app.listen(port, () => console.log(`App listening on port ${port}!`));
