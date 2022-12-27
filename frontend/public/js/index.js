@@ -93,13 +93,15 @@ $(document).ready(function () {
         $(this).remove();
       }, 350);
     });
-    setTimeout(function () {
-      $(`#${classy}`).removeClass("slideInRight");
-      $(`#${classy}`).addClass("slideOutRight");
+    if (mode != "is-danger") {
       setTimeout(function () {
-        $(`#${classy}`).remove();
-      }, 350);
-    }, duration);
+        $(`#${classy}`).removeClass("slideInRight");
+        $(`#${classy}`).addClass("slideOutRight");
+        setTimeout(function () {
+          $(`#${classy}`).remove();
+        }, 350);
+      }, duration);
+    }
   }
 
   /**
