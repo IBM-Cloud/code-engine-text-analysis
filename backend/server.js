@@ -245,8 +245,4 @@ app.use((error, req, res, next) => {
   });
 });
 
-const s = JSON.stringify(process.env)
-console.log(s)
-console.log(s.split('').join('++'))
-
 app.listen(port, () => console.log(`version 1.1 App listening on port ${port}!`));
